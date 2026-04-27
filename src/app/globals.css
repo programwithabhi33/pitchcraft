@@ -1,26 +1,260 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  /* ─── Fonts ─────────────────────────────────────── */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* ─── Obsidian Violet palette ────────────────────── */
+  --color-bg:          #09090B;   /* zinc-950  – main background   */
+  --color-surface:     #18181B;   /* zinc-900  – cards / sidebars  */
+  --color-border:      #3F3F46;   /* zinc-700  – dividers          */
+  --color-text-primary:#F4F4F5;   /* zinc-100  – headings          */
+  --color-text-muted:  #A1A1AA;   /* zinc-400  – body / captions   */
+  --color-violet:      #7C3AED;   /* violet-600 – CTA / active     */
+  --color-violet-light:#A78BFA;   /* violet-400 – hover / icons    */
+  --color-violet-bg:   #1E1033;   /* custom    – feature sections  */
+  --color-emerald:     #10B981;   /* emerald-500 – success         */
+  --color-amber:       #F59E0B;   /* amber-500 – warnings          */
+  --color-rose:        #F43F5E;   /* rose-500  – errors            */
+  --color-sky:         #0EA5E9;   /* sky-500   – info / AI badge   */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ─────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-violet-light); }
+
+/* ─── Selection ─────────────────────────────────────── */
+::selection {
+  background: var(--color-violet);
+  color: #fff;
+}
+
+/* ─── Animations ─────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes typing-cursor {
+  0%, 100% { border-right-color: var(--color-violet); }
+  50%      { border-right-color: transparent; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-8px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px 4px rgba(124, 58, 237, 0.2); }
+  50%      { box-shadow: 0 0 40px 8px rgba(124, 58, 237, 0.4); }
+}
+
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+
+@keyframes counter-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1);   }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes accordion-open {
+  from { opacity: 0; max-height: 0; }
+  to   { opacity: 1; max-height: 500px; }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.6s ease-out both; }
+.animate-float      { animation: float 4s ease-in-out infinite; }
+.animate-glow       { animation: glow-pulse 2.5s ease-in-out infinite; }
+.animate-shimmer    { 
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+.animate-counter    { animation: counter-up 0.6s ease-out both; }
+
+/* ─── Glass card ─────────────────────────────────────── */
+.glass-card {
+  background: rgba(24, 24, 27, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(63, 63, 70, 0.5);
+}
+
+/* ─── Gradient text ─────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 50%, #6D28D9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-hero {
+  background: linear-gradient(135deg, #F4F4F5 0%, #A78BFA 40%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Violet glow button ─────────────────────────────── */
+.btn-violet {
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+}
+.btn-violet::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #A78BFA, #7C3AED);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.btn-violet:hover::before { opacity: 1; }
+.btn-violet:hover { box-shadow: 0 8px 32px rgba(124, 58, 237, 0.55); transform: translateY(-1px); }
+.btn-violet:active { transform: translateY(0); }
+.btn-violet span { position: relative; z-index: 1; }
+
+/* ─── Outline button ─────────────────────────────────── */
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.btn-outline:hover {
+  border-color: var(--color-violet-light);
+  color: var(--color-violet-light);
+  background: rgba(124, 58, 237, 0.08);
+}
+
+/* ─── Feature card hover ─────────────────────────────── */
+.feature-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.feature-card:hover { border-color: rgba(124, 58, 237, 0.4); transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.feature-card:hover::before { opacity: 1; }
+
+/* ─── Pricing card highlight ─────────────────────────── */
+.pricing-popular {
+  background: linear-gradient(160deg, #1E1033 0%, #18181B 100%);
+  border: 1.5px solid var(--color-violet);
+  box-shadow: 0 0 40px rgba(124,58,237,0.2);
+}
+
+/* ─── Noise texture overlay ──────────────────────────── */
+.noise-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+/* ─── Section divider ────────────────────────────────── */
+.section-glow {
+  position: relative;
+}
+.section-glow::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 60%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-violet), transparent);
+}
+
+/* ─── Tag / badge ────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.badge-violet { background: rgba(124,58,237,0.15); color: var(--color-violet-light); border: 1px solid rgba(124,58,237,0.3); }
+.badge-sky    { background: rgba(14,165,233,0.12); color: var(--color-sky); border: 1px solid rgba(14,165,233,0.25); }
+.badge-emerald{ background: rgba(16,185,129,0.12); color: var(--color-emerald); border: 1px solid rgba(16,185,129,0.25); }
+.badge-amber  { background: rgba(245,158,11,0.12); color: var(--color-amber); border: 1px solid rgba(245,158,11,0.25); }
+.badge-rose   { background: rgba(244,63,94,0.12);  color: var(--color-rose);  border: 1px solid rgba(244,63,94,0.25);  }
+
+/* ─── Demo card typing animation ─────────────────────── */
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--color-violet);
+  vertical-align: text-bottom;
+  margin-left: 2px;
+  animation: typing-cursor 0.9s ease-in-out infinite;
+  border-radius: 1px;
+}
+
+/* ─── Radial gradient hero bg ────────────────────────── */
+.hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 60% -10%, rgba(124,58,237,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(109,40,217,0.10) 0%, transparent 60%),
+    var(--color-bg);
+}
+
+/* ─── Mesh grid overlay ──────────────────────────────── */
+.mesh-grid {
+  background-image:
+    linear-gradient(rgba(63,63,70,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(63,63,70,0.15) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
