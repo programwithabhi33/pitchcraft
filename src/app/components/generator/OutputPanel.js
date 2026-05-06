@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Download, BookmarkPlus, RefreshCw, Sparkles, CheckCheck } from 'lucide-react'
+import { Copy, Download, BookmarkPlus, RefreshCw, Sparkles, CheckCheck, Lightbulb } from 'lucide-react'
 
 // Simple markdown formatter for bolding/newlines
 function MarkdownText({ text }) {
@@ -20,7 +20,7 @@ function MarkdownText({ text }) {
   )
 }
 
-export default function OutputPanel({ isGenerating, outputData, activeTab, onRegenerate }) {
+export default function OutputPanel({ isGenerating, outputData, activeTab, onRegenerate, lastFormData }) {
   const [copied, setCopied] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -60,10 +60,32 @@ export default function OutputPanel({ isGenerating, outputData, activeTab, onReg
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleSave = () => {
-    if (!outputData) return
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+  const handleSave = async () => {
+    if (!outputData || saved) return
+    
+    try {
+      const response = await fetch('/api/outputs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: activeTab === 'email' ? 'cold_email' : activeTab,
+          tone: lastFormData?.tone || 'Friendly',
+          inputs: lastFormData,
+          content: outputData.body,
+          model: 'groq/llama-3.3-70b',
+        }),
+      })
+
+      if (response.ok) {
+        setSaved(true)
+        setTimeout(() => setSaved(false), 3000)
+      } else {
+        alert('Failed to save. Please try again.')
+      }
+    } catch (error) {
+      console.error('Save error:', error)
+      alert('An error occurred while saving.')
+    }
   }
 
   // Determine if it's completely empty

@@ -164,24 +164,24 @@ export default function Pricing() {
 
               <p className="text-[#A1A1AA] text-sm leading-relaxed mb-6">{plan.description}</p>
 
-              {/* CTA */}
-              {plan.ctaStyle === 'violet' ? (
-                <a
-                  href="#"
-                  id={plan.ctaId}
-                  className="btn-violet text-center text-sm py-3 mb-6 block"
-                >
-                  <span>{plan.cta}</span>
-                </a>
-              ) : (
-                <a
-                  href="#"
-                  id={plan.ctaId}
-                  className="btn-outline text-center text-sm py-3 mb-6 block"
-                >
-                  {plan.cta}
-                </a>
-              )}
+               {/* CTA */}
+               {plan.ctaStyle === 'violet' ? (
+                 <a
+                   href="/auth"
+                   id={plan.ctaId}
+                   className="btn-violet text-center text-sm py-3 mb-6 block"
+                 >
+                   <span>{plan.cta}</span>
+                 </a>
+               ) : (
+                 <a
+                   href="/auth"
+                   id={plan.ctaId}
+                   className="btn-outline text-center text-sm py-3 mb-6 block"
+                 >
+                   {plan.cta}
+                 </a>
+               )}
 
               {/* Divider */}
               <div className="border-t border-[#3F3F46]/60 mb-5" />

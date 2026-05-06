@@ -5,54 +5,45 @@ import { motion } from 'framer-motion'
 import * as Tabs from '@radix-ui/react-tabs'
 import GeneratorForm from '@/app/components/generator/GeneratorForm'
 import OutputPanel from '@/app/components/generator/OutputPanel'
-import { Mail, FileText, Clock, Send } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
 const TABS = [
   { id: 'email', label: 'Cold Email', icon: Mail },
-  { id: 'proposal', label: 'Proposal PDF', icon: FileText },
-  { id: 'followup', label: 'Follow-up Sequence', icon: Clock },
-  { id: 'linkedin', label: 'LinkedIn Message', icon: Send },
 ]
 
 export default function GeneratorPage() {
   const [activeTab, setActiveTab] = useState('email')
   const [isGenerating, setIsGenerating] = useState(false)
   const [outputData, setOutputData] = useState(null)
+  const [lastFormData, setLastFormData] = useState(null)
 
   const handleGenerate = async (formData) => {
     setIsGenerating(true)
     setOutputData(null)
+    setLastFormData(formData)
     
-    // Mock API call to simulate generation
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    
-    // Mock output data based on tab
-    let result = {}
-    if (activeTab === 'email') {
-      result = {
-        subjects: [
-          'Quick question about your frontend team',
-          'Scaling your MVP with React',
-          'Frontend support for your upcoming launch'
-        ],
-        body: `Hi Sarah,\n\nI noticed your recent post about scaling the MVP. Managing a fast-paced product roadmap is tough, especially when the frontend starts to slow down feature delivery.\n\nI'm Arjun, a React developer specializing in early-stage startups. I help teams ship clean, maintainable frontend features without the overhead of a full-time hire.\n\nWould you be open to a quick chat to see if there's a fit for your upcoming milestones?\n\nBest,\nArjun`
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        alert(data.message || 'Something went wrong while generating')
+        setIsGenerating(false)
+        return
       }
-    } else if (activeTab === 'proposal') {
-      result = {
-        body: `# Project Proposal\n\n## 1. Project Overview\nWe will modernize your legacy dashboard using React and Tailwind CSS.\n\n## 2. Scope of Work\n- Design System implementation\n- Component migration\n- State management with Zustand\n\n## 3. Timeline\nEstimated completion: 4-6 weeks.\n\n## 4. Investment\nTotal fixed price: $4,500 USD.`
-      }
-    } else if (activeTab === 'followup') {
-      result = {
-        body: `**Day 1**\nHi Sarah,\nJust bringing this to the top of your inbox. Let me know if you have any questions about the proposal!\n\n**Day 4**\nHi Sarah,\nChecking in—I know how busy things get. Should we reconnect next week instead?\n\n**Day 7**\nHi Sarah,\nI'll assume the timing isn't right for now. Keep me in mind if things change! I'll stay subscribed to your updates.`
-      }
-    } else if (activeTab === 'linkedin') {
-      result = {
-        body: `Hi Sarah! Loved your recent post about scaling MVP engineering. I specialize in helping startups like yours accelerate frontend delivery with React. Would love to connect and follow your journey!`
-      }
+
+      setOutputData(data)
+    } catch (error) {
+      console.error('Generation error:', error)
+      alert('Failed to connect to the generator. Please try again.')
+    } finally {
+      setIsGenerating(false)
     }
-    
-    setOutputData(result)
-    setIsGenerating(false)
   }
 
   return (
@@ -108,7 +99,8 @@ export default function GeneratorPage() {
             isGenerating={isGenerating}
             outputData={outputData}
             activeTab={activeTab}
-            onRegenerate={() => handleGenerate(null)} // Re-uses last data in real app
+            lastFormData={lastFormData}
+            onRegenerate={() => handleGenerate(lastFormData)}
           />
         </div>
       </div>

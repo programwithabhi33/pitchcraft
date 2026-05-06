@@ -2,22 +2,32 @@ import DashboardHeader from '@/app/components/dashboard/DashboardHeader'
 import QuickActions from '@/app/components/dashboard/QuickActions'
 import RecentOutputs from '@/app/components/dashboard/RecentOutputs'
 import TipsSidebar from '@/app/components/dashboard/TipsSidebar'
+import { auth } from '@/auth'
+import dbConnect from '@/lib/db'
+import User from '@/models/User'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await auth()
+  await dbConnect()
+  const user = await User.findById(session.user.id)
+
+  const usageCount = user?.usageCount || 0
+  const totalLimit = 10
+
   return (
     <div className="flex flex-col min-h-full">
       {/* Top header bar */}
       <DashboardHeader />
 
       {/* Content — 2-column layout: main + right sidebar */}
-      <div className="flex flex-1 gap-0">
+      <div className="flex-1 gap-0">
 
         {/* ── Main content area ─────────────────── */}
         <main className="flex-1 min-w-0 p-6 space-y-8">
 
           {/* Usage bar (mobile — shown only on small screens, header shows pill on md+) */}
           <div className="sm:hidden">
-            <MobileUsageBar />
+            <MobileUsageBar used={usageCount} total={totalLimit} />
           </div>
 
           {/* Quick actions */}
@@ -30,7 +40,7 @@ export default function DashboardPage() {
           </section>
 
           {/* Recent outputs */}
-          <RecentOutputs isEmpty={false} />
+          <RecentOutputs />
         </main>
 
         {/* ── Right sidebar ─────────────────────── */}
@@ -43,9 +53,7 @@ export default function DashboardPage() {
 }
 
 // Mobile-only usage bar
-function MobileUsageBar() {
-  const used = 3
-  const total = 5
+function MobileUsageBar({ used, total }) {
   const pct = (used / total) * 100
 
   return (
@@ -65,3 +73,4 @@ function MobileUsageBar() {
     </div>
   )
 }
+

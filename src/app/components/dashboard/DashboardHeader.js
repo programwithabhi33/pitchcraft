@@ -3,10 +3,9 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Bell, Search } from 'lucide-react'
+import useSWR from 'swr'
 
-// Mock data — replace with backend hook later
-const mockUser = { name: 'Arjun' }
-const mockUsage = { used: 3, total: 5, plan: 'free' }
+const fetcher = (url) => fetch(url).then((res) => res.json())
 
 function getGreeting() {
   const hour = new Date().getHours()
@@ -16,16 +15,20 @@ function getGreeting() {
 }
 
 export default function DashboardHeader() {
+  const { data: user, error } = useSWR('/api/user/usage', fetcher)
   const greeting = useMemo(() => getGreeting(), [])
-  const pct = (mockUsage.used / mockUsage.total) * 100
+  
+  const used = user?.usageCount || 0
+  const total = user?.totalLimit || 10
+  const pct = (used / total) * 100
 
   return (
     <header className="flex items-center justify-between px-6 py-4 border-b border-[#27272A] bg-[#18181B] h-16 flex-shrink-0 sticky top-0 z-20">
 
       {/* Left: Greeting */}
       <div>
-        <h1 className="text-lg font-bold text-[#F4F4F5] leading-tight">
-          {greeting}, {mockUser.name} 👋
+        <h1 className="text-lg font-bold text-[#F4F4F5] leading-tight truncate">
+          {greeting}, {user?.name?.split(' ')[0] || 'there'} 👋
         </h1>
         <p className="text-xs text-[#52525B]">Here's your workspace</p>
       </div>
@@ -46,41 +49,43 @@ export default function DashboardHeader() {
         </div>
 
         {/* Usage pill */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          id="dashboard-usage-pill"
-          className="hidden sm:flex items-center gap-2.5 bg-[#09090B] border border-[#27272A] rounded-xl px-3.5 py-2"
-        >
-          {/* Mini progress bar */}
-          <div className="relative w-20 h-1.5 bg-[#27272A] rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${pct}%` }}
-              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-              className={`absolute inset-y-0 left-0 rounded-full ${
-                pct >= 80 ? 'bg-[#F43F5E]' : pct >= 60 ? 'bg-[#F59E0B]' : 'bg-[#7C3AED]'
-              }`}
-            />
-          </div>
+        {!error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            id="dashboard-usage-pill"
+            className="hidden sm:flex items-center gap-2.5 bg-[#09090B] border border-[#27272A] rounded-xl px-3.5 py-2"
+          >
+            {/* Mini progress bar */}
+            <div className="relative w-20 h-1.5 bg-[#27272A] rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+                className={`absolute inset-y-0 left-0 rounded-full ${
+                  pct >= 80 ? 'bg-[#F43F5E]' : pct >= 60 ? 'bg-[#F59E0B]' : 'bg-[#7C3AED]'
+                }`}
+              />
+            </div>
 
-          <span className="text-xs font-semibold text-[#A1A1AA] whitespace-nowrap">
-            <span className={pct >= 80 ? 'text-[#F43F5E]' : 'text-[#F4F4F5]'}>
-              {mockUsage.used}
+            <span className="text-xs font-semibold text-[#A1A1AA] whitespace-nowrap">
+              <span className={pct >= 80 ? 'text-[#F43F5E]' : 'text-[#F4F4F5]'}>
+                {used}
+              </span>
+              <span className="text-[#52525B]"> of {total} free uses</span>
             </span>
-            <span className="text-[#52525B]"> of {mockUsage.total} free uses</span>
-          </span>
 
-          {mockUsage.plan === 'free' && (
-            <a
-              href="/dashboard/upgrade"
-              id="header-upgrade-link"
-              className="text-[10px] font-bold uppercase tracking-wider text-[#7C3AED] hover:text-[#A78BFA] transition-colors whitespace-nowrap"
-            >
-              Upgrade →
-            </a>
-          )}
-        </motion.div>
+            {user?.plan === 'free' && (
+              <a
+                href="/dashboard/upgrade"
+                id="header-upgrade-link"
+                className="text-[10px] font-bold uppercase tracking-wider text-[#7C3AED] hover:text-[#A78BFA] transition-colors whitespace-nowrap"
+              >
+                Upgrade →
+              </a>
+            )}
+          </motion.div>
+        )}
 
         {/* Notifications */}
         <button

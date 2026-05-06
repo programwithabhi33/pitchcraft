@@ -6,7 +6,7 @@ import Link from 'next/link'
 const navLinks = [
   { href: '/#features', label: 'Features' },
   { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/pricing', label: 'Pricing' },
+  { href: '/#pricing', label: 'Pricing' },
   { href: '/#faq', label: 'FAQ' },
 ]
 
@@ -19,7 +19,7 @@ export default function Navbar({ theme = 'dark' }) {
   const textColor = isLight ? 'text-zinc-600' : 'text-[#A1A1AA]'
   const hoverTextColor = isLight ? 'hover:text-zinc-900' : 'hover:text-[#F4F4F5]'
   const logoTextColor = isLight ? 'text-zinc-900' : 'text-[#F4F4F5]'
-  const bgScrolled = isLight ? 'bg-white/95 border-zinc-200' : 'bg-[#09090B]/95 border-[#3F3F46]/60'
+  const bgScrolled = isLight ? 'bg-white/95' : 'bg-[#09090B]/95'
   const btnOutlineClass = isLight ? 'border-zinc-300 text-zinc-700 hover:bg-zinc-100' : 'btn-outline text-[#A1A1AA]'
 
   useEffect(() => {
@@ -30,11 +30,10 @@ export default function Navbar({ theme = 'dark' }) {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? `${bgScrolled} backdrop-blur-md border-b shadow-sm`
-          : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? `${bgScrolled} backdrop-blur-md border-b-[#3F3F46]/60 shadow-sm`
+        : `bg-transparent`
+        }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
@@ -42,9 +41,9 @@ export default function Navbar({ theme = 'dark' }) {
         <Link href="/" id="nav-logo" className="flex items-center gap-2.5 group flex-shrink-0">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] flex items-center justify-center shadow-[0_0_16px_rgba(124,58,237,0.5)] group-hover:shadow-[0_0_24px_rgba(124,58,237,0.7)] transition-shadow duration-300">
             <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-              <path d="M2 17l10 5 10-5"/>
-              <path d="M2 12l10 5 10-5"/>
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
             </svg>
           </div>
           <span className={`${logoTextColor} font-bold text-lg tracking-tight`}>

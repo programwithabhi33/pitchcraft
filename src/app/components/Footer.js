@@ -5,18 +5,18 @@ const footerLinks = {
     { id: 'footer-features', label: 'Features', href: '#features' },
     { id: 'footer-pricing', label: 'Pricing', href: '#pricing' },
     { id: 'footer-how-it-works', label: 'How It Works', href: '#how-it-works' },
-    { id: 'footer-changelog', label: 'Changelog', href: '#' },
+    { id: 'footer-changelog', label: 'Changelog', href: '/' },
   ],
   Company: [
-    { id: 'footer-about', label: 'About', href: '#' },
-    { id: 'footer-blog', label: 'Blog', href: '#' },
-    { id: 'footer-careers', label: 'Careers', href: '#' },
-    { id: 'footer-contact', label: 'Contact', href: '#' },
+    { id: 'footer-about', label: 'About', href: '/' },
+    { id: 'footer-blog', label: 'Blog', href: '/' },
+    { id: 'footer-careers', label: 'Careers', href: '/' },
+    { id: 'footer-contact', label: 'Contact', href: '/' },
   ],
   Legal: [
-    { id: 'footer-privacy', label: 'Privacy Policy', href: '#' },
-    { id: 'footer-terms', label: 'Terms of Service', href: '#' },
-    { id: 'footer-refund', label: 'Refund Policy', href: '#' },
+    { id: 'footer-privacy', label: 'Privacy Policy', href: '/' },
+    { id: 'footer-terms', label: 'Terms of Service', href: '/' },
+    { id: 'footer-refund', label: 'Refund Policy', href: '/' },
   ],
 }
 
@@ -57,35 +57,35 @@ export default function Footer() {
   return (
     <footer className="bg-[#09090B] border-t border-[#3F3F46]/40">
 
-      {/* CTA Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[#1E1033] via-[#2d1060] to-[#1E1033] py-16">
-        <div className="absolute inset-0 mesh-grid opacity-20" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-[#7C3AED]/20 rounded-full blur-3xl" />
+           {/* CTA Banner */}
+           <div className="relative overflow-hidden bg-gradient-to-r from-[#1E1033] via-[#2d1060] to-[#1E1033] py-16">
+             <div className="absolute inset-0 mesh-grid opacity-20" />
+             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-[#7C3AED]/20 rounded-full blur-3xl" />
 
-        <div className="relative max-w-3xl mx-auto px-4 text-center space-y-6">
-          <span className="badge badge-violet mx-auto">Get Started Today</span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#F4F4F5] leading-tight mt-3">
-            Stop Losing Clients to{' '}
-            <span className="gradient-text">Weak Proposals</span>
-          </h2>
-          <p className="text-[#A1A1AA] text-base max-w-lg mx-auto">
-            Join 2,400+ freelancers already using PitchCraft to win projects with AI-powered outreach.
-            Start free — no credit card required.
-          </p>
-          <a
-            href="#"
-            id="footer-cta-btn"
-            className="btn-violet inline-flex items-center gap-2.5 text-base px-8 py-3.5"
-          >
-            <span className="flex items-center gap-2.5">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Generate My First Email Free
-            </span>
-          </a>
-        </div>
-      </div>
+             <div className="relative max-w-3xl mx-auto px-4 text-center space-y-6">
+               <span className="badge badge-violet mx-auto">Get Started Today</span>
+               <h2 className="text-3xl sm:text-4xl font-extrabold text-[#F4F4F5] leading-tight mt-3">
+                 Stop Losing Clients to{' '}
+                 <span className="gradient-text">Weak Proposals</span>
+               </h2>
+               <p className="text-[#A1A1AA] text-base max-w-lg mx-auto">
+                 Join 2,400+ freelancers already using PitchCraft to win projects with AI-powered outreach.
+                 Start free — no credit card required.
+               </p>
+               <a
+                 href="/auth"
+                 id="footer-cta-btn"
+                 className="btn-violet inline-flex items-center gap-2.5 text-base px-8 py-3.5"
+               >
+                 <span className="flex items-center gap-2.5">
+                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                   </svg>
+                   Generate My First Email Free
+                 </span>
+               </a>
+             </div>
+           </div>
 
       {/* Footer links */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
@@ -108,20 +108,27 @@ export default function Footer() {
             <p className="text-[#A1A1AA] text-sm leading-relaxed">
               AI-powered cold emails and proposals for freelancers, agencies, and consultants.
             </p>
-            {/* Social icons */}
-            <div className="flex gap-2 pt-1">
-              {socialLinks.map(link => (
-                <a
-                  key={link.id}
-                  id={link.id}
-                  href={link.href}
-                  aria-label={link.label}
-                  className="w-8 h-8 rounded-lg bg-[#18181B] border border-[#3F3F46] flex items-center justify-center text-[#A1A1AA] hover:text-[#A78BFA] hover:border-[#7C3AED]/40 transition-all"
-                >
-                  {link.icon}
-                </a>
-              ))}
-            </div>
+           {/* Social icons */}
+             <div className="flex gap-2 pt-1">
+               {socialLinks.map((link, index) => {
+                 let url = '#'
+                 if (link.id === 'social-twitter') url = 'https://twitter.com/pitchcraftai'
+                 else if (link.id === 'social-linkedin') url = 'https://linkedin.com/company/pitchcraftai'
+                 else if (link.id === 'social-github') url = 'https://github.com/pitchcraftai'
+                 
+                 return (
+                   <a
+                     key={link.id}
+                     id={link.id}
+                     href={url}
+                     aria-label={link.label}
+                     className="w-8 h-8 rounded-lg bg-[#18181B] border border-[#3F3F46] flex items-center justify-center text-[#A1A1AA] hover:text-[#A78BFA] hover:border-[#7C3AED]/40 transition-all"
+                   >
+                     {link.icon}
+                   </a>
+                 )
+               })}
+             </div>
           </div>
 
           {/* Link columns */}

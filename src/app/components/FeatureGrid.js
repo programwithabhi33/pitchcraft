@@ -141,23 +141,23 @@ export default function FeatureGrid() {
           ))}
         </div>
 
-        {/* Extra mini-features row */}
-        <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { icon: '🔗', label: 'LinkedIn Message' },
-            { icon: '🎯', label: 'Subject Line Variants' },
-            { icon: '🌐', label: 'Multi-country English' },
-            { icon: '⚡', label: 'Instant PDF Export' },
-          ].map(item => (
-            <div
-              key={item.label}
-              className="flex items-center gap-3 bg-[#18181B] border border-[#3F3F46] rounded-xl px-4 py-3.5 hover:border-[#7C3AED]/40 transition-colors"
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span className="text-sm font-medium text-[#A1A1AA]">{item.label}</span>
-            </div>
-          ))}
-        </div>
+         {/* Extra mini-features row */}
+         <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
+           {[
+             { icon: '🔗', label: 'LinkedIn Message' },
+             { icon: '🎯', label: 'Subject Line Variants' },
+             { icon: '🌐', label: 'Multi-country English' },
+             { icon: '⚡', label: 'Instant PDF Export' },
+           ].map(item => (
+             <div
+               key={item.label}
+               className="flex items-center gap-3 bg-[#18181B] border border-[#3F3F46] rounded-xl px-4 py-3.5 hover:border-[#7C3AED]/40 hover:text-[#F4F4F5] transition-colors"
+             >
+               <span className="text-xl">{item.icon}</span>
+               <span className="text-sm font-medium text-[#A1A1AA]">{item.label}</span>
+             </div>
+           ))}
+         </div>
       </div>
     </section>
   )

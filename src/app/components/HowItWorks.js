@@ -81,21 +81,21 @@ export default function HowItWorks() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <a
-            href="#"
-            id="how-it-works-cta"
-            className="btn-violet inline-flex items-center gap-2.5 text-base px-8 py-3.5"
-          >
-            <span className="flex items-center gap-2.5">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Try It Free — No Card Needed
-            </span>
-          </a>
-        </div>
+         {/* CTA */}
+         <div className="text-center mt-16">
+           <a
+             href="/auth"
+             id="how-it-works-cta"
+             className="btn-violet inline-flex items-center gap-2.5 text-base px-8 py-3.5"
+           >
+             <span className="flex items-center gap-2.5">
+               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+               </svg>
+               Try It Free — No Card Needed
+             </span>
+           </a>
+         </div>
       </div>
     </section>
   )
