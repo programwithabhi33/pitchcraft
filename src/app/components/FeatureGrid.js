@@ -16,39 +16,38 @@ const features = [
     title: 'Cold Emails That Actually Get Replies',
     description:
       'Three tone options — Confident, Warm, or Direct. Native-level English adapted to the client\'s country and industry. Subject line A/B variants included.',
-    bullets: ['3 tone presets', 'AI-optimised subject lines', 'LinkedIn message variant'],
+    bullets: ['3 tone presets', 'AI-optimised subject lines', 'Instant copy with one click'],
     color: '#7C3AED',
   },
   {
-    id: 'feature-proposal-pdf',
+    id: 'feature-custom-tones',
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
       </svg>
     ),
-    badge: 'Proposal PDF',
+    badge: '3 Tone Modes',
     badgeClass: 'badge-sky',
-    title: '1-Page Proposal PDF, Print-Ready',
+    title: 'Formal, Friendly, or Bold — Your Choice',
     description:
-      'A professional project proposal — scope, timeline, pricing, and your credibility — generated and exported to PDF in seconds. Looks like a 50-person agency wrote it.',
-    bullets: ['Scope + deliverables', 'Timeline & pricing section', 'One-click PDF export'],
+      'Adjust the vibe of your outreach with a single click. From professional corporate emails to casual startup greetings.',
+    bullets: ['Professional Formal', 'Casual Friendly', 'Aggressive Bold'],
     color: '#0EA5E9',
   },
   {
-    id: 'feature-followup',
+    id: 'feature-history',
     icon: (
       <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
           d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    badge: 'Follow-up Suite',
+    badge: 'Personal Library',
     badgeClass: 'badge-emerald',
-    title: 'Automated Follow-up Sequence',
+    title: 'Never Lose a Winning Template',
     description:
-      'Day 1, Day 4, Day 7 follow-up emails — written and ready to send. No more awkward nudges. No more forgotten deals. Every lead gets followed up consistently.',
-    bullets: ['Day 1 / 4 / 7 cadence', 'Tone matches initial email', 'Copy with one click'],
+      'Every email you generate is saved to your personal library. Browse, search, and reuse your best-performing outreach copy anytime.',
+    bullets: ['Auto-save history', 'Search by client name', 'One-click reuse'],
     color: '#10B981',
   },
 ]
@@ -97,7 +96,7 @@ function FeatureCard({ feature, delay }) {
       {/* Bullets */}
       <ul className="space-y-2">
         {feature.bullets.map(b => (
-          <li key={b} className="flex items-center gap-2.5 text-sm text-[#A1A1AA]">
+          <li key={b} className="flex items-start gap-2.5 text-sm text-[#A1A1AA]">
             <span
               className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0"
               style={{ background: `${feature.color}20` }}
@@ -125,12 +124,12 @@ export default function FeatureGrid() {
         <div className="text-center mb-16 space-y-4">
           <span className="badge badge-violet mx-auto">What You Get</span>
           <h2 className="text-4xl font-bold text-[#F4F4F5] mt-4">
-            Everything You Need to{' '}
-            <span className="gradient-text">Close More Deals</span>
+            High-Conversion Emails,{' '}
+            <span className="gradient-text">Zero Effort</span>
           </h2>
           <p className="text-[#A1A1AA] text-lg max-w-2xl mx-auto leading-relaxed">
-            PitchCraft generates a complete outreach package — not just one email.
-            Fill in 4 fields and get a full, send-ready kit in 30 seconds.
+            PitchCraft generates hyper-personalized outreach in seconds.
+            Fill in 4 fields and get a send-ready email that wins replies.
           </p>
         </div>
 
@@ -144,10 +143,10 @@ export default function FeatureGrid() {
          {/* Extra mini-features row */}
          <div className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-4">
            {[
-             { icon: '🔗', label: 'LinkedIn Message' },
-             { icon: '🎯', label: 'Subject Line Variants' },
-             { icon: '🌐', label: 'Multi-country English' },
-             { icon: '⚡', label: 'Instant PDF Export' },
+             { icon: '🎯', label: 'Subject Variants' },
+             { icon: '💾', label: 'Auto-Save History' },
+             { icon: '🌐', label: 'Multi-Market English' },
+             { icon: '⚡', label: 'Instant Copy' },
            ].map(item => (
              <div
                key={item.label}

@@ -52,7 +52,7 @@ export default function GeneratorPage() {
       <div className="sticky top-0 z-10 bg-[#09090B] border-b border-[#27272A] px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-[#F4F4F5]">Generator</h1>
-          <p className="text-xs text-[#71717A]">AI-powered outreach and proposals</p>
+          <p className="text-xs text-[#71717A]">AI-powered high-conversion cold emails</p>
         </div>
         
         <Tabs.Root value={activeTab} onValueChange={setActiveTab}>
@@ -98,7 +98,6 @@ export default function GeneratorPage() {
           <OutputPanel
             isGenerating={isGenerating}
             outputData={outputData}
-            activeTab={activeTab}
             lastFormData={lastFormData}
             onRegenerate={() => handleGenerate(lastFormData)}
           />

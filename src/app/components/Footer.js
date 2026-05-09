@@ -66,7 +66,8 @@ export default function Footer() {
                <span className="badge badge-violet mx-auto">Get Started Today</span>
                <h2 className="text-3xl sm:text-4xl font-extrabold text-[#F4F4F5] leading-tight mt-3">
                  Stop Losing Clients to{' '}
-                 <span className="gradient-text">Weak Proposals</span>
+                 <span className="gradient-text">Weak Outreach</span>
+
                </h2>
                <p className="text-[#A1A1AA] text-base max-w-lg mx-auto">
                  Join 2,400+ freelancers already using PitchCraft to win projects with AI-powered outreach.
@@ -106,7 +107,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[#A1A1AA] text-sm leading-relaxed">
-              AI-powered cold emails and proposals for freelancers, agencies, and consultants.
+              AI-powered cold emails for freelancers, agencies, and consultants.
             </p>
            {/* Social icons */}
              <div className="flex gap-2 pt-1">

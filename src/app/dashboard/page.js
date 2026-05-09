@@ -11,9 +11,6 @@ export default async function DashboardPage() {
   await dbConnect()
   const user = await User.findById(session.user.id)
 
-  const usageCount = user?.usageCount || 0
-  const totalLimit = 10
-
   return (
     <div className="flex flex-col min-h-full">
       {/* Top header bar */}
@@ -24,11 +21,6 @@ export default async function DashboardPage() {
 
         {/* ── Main content area ─────────────────── */}
         <main className="flex-1 min-w-0 p-6 space-y-8">
-
-          {/* Usage bar (mobile — shown only on small screens, header shows pill on md+) */}
-          <div className="sm:hidden">
-            <MobileUsageBar used={usageCount} total={totalLimit} />
-          </div>
 
           {/* Quick actions */}
           <section>
@@ -51,26 +43,3 @@ export default async function DashboardPage() {
     </div>
   )
 }
-
-// Mobile-only usage bar
-function MobileUsageBar({ used, total }) {
-  const pct = (used / total) * 100
-
-  return (
-    <div className="bg-[#18181B] border border-[#27272A] rounded-xl p-4 flex items-center gap-4">
-      <div className="flex-1 space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-medium text-[#A1A1AA]">{used} of {total} free uses</span>
-          <a href="/dashboard/upgrade" className="text-xs font-bold text-[#7C3AED]">Upgrade →</a>
-        </div>
-        <div className="h-1.5 rounded-full bg-[#27272A] overflow-hidden">
-          <div
-            className="h-full rounded-full bg-[#7C3AED] transition-all"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
-

@@ -224,7 +224,7 @@ function ApiSection() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
       <div>
         <h2 className="text-xl font-bold text-[#F4F4F5]">API Access</h2>
-        <p className="text-sm text-[#71717A] mt-1">Generate proposals programmatically (Pro feature).</p>
+        <p className="text-sm text-[#71717A] mt-1">Generate outreach emails programmatically (Pro feature).</p>
       </div>
 
       <div className="bg-[#1E1033]/40 border border-[#7C3AED]/30 rounded-2xl p-6 max-w-2xl text-center relative overflow-hidden">
@@ -235,7 +235,7 @@ function ApiSection() {
         <Code className="w-10 h-10 text-[#A78BFA] mx-auto mb-3" />
         <h3 className="text-base font-bold text-[#F4F4F5] mb-2">Unlock PitchCraft API</h3>
         <p className="text-xs text-[#A1A1AA] max-w-md mx-auto mb-6 leading-relaxed">
-          Automate your proposal workflows by connecting PitchCraft to Zapier, Make, or your custom CRM backend. Available on Pro and Team plans.
+          Automate your outreach workflows by connecting PitchCraft to Zapier, Make, or your custom CRM backend. Available on Pro and Team plans.
         </p>
         <button className="btn-violet px-6 py-2.5 text-sm">Upgrade to Unlock</button>
       </div>

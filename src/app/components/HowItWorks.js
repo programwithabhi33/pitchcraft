@@ -18,7 +18,7 @@ export default function HowItWorks() {
       id: 'step-2',
       number: '02',
       title: 'AI Generates Your Kit',
-      description: 'PitchCraft generates a cold email (3 tones), a 1-page proposal, a 3-email follow-up sequence, and a LinkedIn message — all in under 30 seconds.',
+      description: 'PitchCraft generates a high-conversion cold email in 3 distinct tones — all in under 30 seconds.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
@@ -30,7 +30,7 @@ export default function HowItWorks() {
       id: 'step-3',
       number: '03',
       title: 'Review, Edit & Send',
-      description: 'Copy any piece with one click. Export your proposal to PDF. Edit the tone or regenerate in seconds. Then send — and win.',
+      description: 'Copy your favorite version with one click. Save it to your history or regenerate in seconds. Then send — and win.',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}

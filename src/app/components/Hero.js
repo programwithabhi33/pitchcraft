@@ -102,18 +102,16 @@ export default function Hero() {
           <h1 className="text-5xl sm:text-6xl font-extrabold leading-[1.1] tracking-tight">
             <span className="gradient-text-hero">Win More Clients</span>
             <br />
-            <span className="text-[#F4F4F5]">with AI-Written</span>
+            <span className="text-[#F4F4F5]">with High-Conversion</span>
             <br />
             <span className="text-[#F4F4F5]">Cold Emails</span>
-            <span className="text-[#7C3AED]"> &amp; </span>
-            <span className="text-[#F4F4F5]">Proposals</span>
           </h1>
 
           {/* Sub-tagline */}
           <p className="text-lg text-[#A1A1AA] leading-relaxed max-w-lg">
-            Fill in 4 fields. Get a polished cold email, a 1-page proposal PDF, and a
-            3-email follow-up sequence — in under{' '}
-            <span className="text-[#F4F4F5] font-semibold">30 seconds</span>. No blank-page paralysis. No weak English.
+            Fill in 4 fields. Get a polished cold email in under{' '}
+            <span className="text-[#F4F4F5] font-semibold">30 seconds</span>. 
+            No blank-page paralysis. No weak English. Just results.
           </p>
 
           {/* CTA buttons */}
@@ -127,7 +125,7 @@ export default function Hero() {
                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                  </svg>
-                 Generate My First Email
+                 Generate My First Email Free
                </span>
              </a>
              <a
@@ -147,7 +145,7 @@ export default function Hero() {
             {[
               { icon: '⚡', label: '30-second output' },
               { icon: '🌍', label: 'Native-level English' },
-              { icon: '📄', label: 'PDF proposal included' },
+              { icon: '🔥', label: '100% Free to start' },
             ].map(item => (
               <div key={item.label} className="flex items-center gap-2 text-sm text-[#A1A1AA]">
                 <span>{item.icon}</span>
@@ -216,11 +214,11 @@ export default function Hero() {
                 <button id="demo-copy-btn" className="flex-1 text-xs font-semibold py-2 rounded-lg bg-[#7C3AED] text-white hover:bg-[#6D28D9] transition-colors">
                   Copy Email
                 </button>
-                <button id="demo-pdf-btn" className="flex-1 text-xs font-semibold py-2 rounded-lg border border-[#3F3F46] text-[#A1A1AA] hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors">
-                  Export PDF
+                <button id="demo-save-btn" className="flex-1 text-xs font-semibold py-2 rounded-lg border border-[#3F3F46] text-[#A1A1AA] hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors">
+                  Save to History
                 </button>
-                <button id="demo-followup-btn" className="flex-1 text-xs font-semibold py-2 rounded-lg border border-[#3F3F46] text-[#A1A1AA] hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors">
-                  Follow-ups
+                <button id="demo-regenerate-btn" className="flex-1 text-xs font-semibold py-2 rounded-lg border border-[#3F3F46] text-[#A1A1AA] hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors">
+                  Regenerate
                 </button>
               </div>
             </div>

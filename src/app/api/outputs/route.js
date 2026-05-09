@@ -18,7 +18,7 @@ export async function POST(req) {
     const newOutput = await Output.create({
       userId: session.user.id,
       type: type || 'cold_email',
-      tone,
+      tone: tone.toLowerCase(),
       inputs,
       content,
       model: model || 'groq/llama-3.3-70b',

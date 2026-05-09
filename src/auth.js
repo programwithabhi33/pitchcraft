@@ -67,16 +67,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
+      if (token.picture && session.user) {
+        session.user.image = token.picture;
+      }
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
-        // This runs on sign in. 
-        // We look up the user in DB to get the real MongoDB _id
         await dbConnect();
         const dbUser = await User.findOne({ email: user.email });
         if (dbUser) {
           token.sub = dbUser._id.toString();
+          token.picture = dbUser.avatar; // Map DB avatar to token picture
         }
       }
       return token;

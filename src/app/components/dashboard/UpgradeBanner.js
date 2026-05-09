@@ -36,7 +36,7 @@ export default function UpgradeBanner({ userPlan = 'free' }) {
                   You have <span className="text-[#F43F5E]">2 free uses left</span> this month
                 </p>
                 <p className="text-xs text-[#71717A] hidden sm:block">
-                  Upgrade to Pro for unlimited emails, proposals &amp; follow-ups — ₹199/month
+                  Upgrade to Pro for unlimited AI cold emails — ₹199/month
                 </p>
               </div>
             </div>

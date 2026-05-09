@@ -15,15 +15,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "PitchCraft AI – Cold Email & Proposal Generator",
+  title: "PitchCraft AI – Cold Email Generator",
   description:
-    "Generate polished cold emails, 1-page proposals, and follow-up sequences in under 30 seconds. Built for freelancers, agencies, and consultants.",
+    "Generate polished cold emails in under 30 seconds. Built for freelancers, agencies, and consultants.",
   keywords:
-    "cold email generator, AI proposal writer, freelance tools, upwork proposal, cold outreach AI",
+    "cold email generator, freelance tools, cold outreach AI",
   openGraph: {
-    title: "PitchCraft AI – Cold Email & Proposal Generator",
+    title: "PitchCraft AI – Cold Email Generator",
     description:
-      "AI-powered cold emails and project proposals ready to send in 30 seconds.",
+      "AI-powered cold emails ready to send in 30 seconds.",
     type: "website",
   },
 };

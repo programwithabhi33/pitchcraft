@@ -1,21 +1,21 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const OutputSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
     index: true,
   },
   type: {
     type: String,
-    enum: ['cold_email'],
+    enum: ["cold_email"],
     required: true,
-    default: 'cold_email',
+    default: "cold_email",
   },
   tone: {
     type: String,
-    enum: ['formal', 'friendly', 'bold'],
+    enum: ["Formal", "Friendly", "Bold"],
     required: true,
   },
   inputs: {
@@ -40,4 +40,4 @@ const OutputSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Output || mongoose.model('Output', OutputSchema);
+export default mongoose.models.Output || mongoose.model("Output", OutputSchema);

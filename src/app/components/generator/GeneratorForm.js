@@ -32,16 +32,14 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
     onGenerate({ ...data, tone: selectedTone })
   }
 
-  // Determine what placeholers to show based on activeTab
+  // Determine what placeholers to show
   const placeholders = {
     role: "e.g. Arjun, React Developer",
     service: "e.g. Frontend MVP Builds",
     clientName: "e.g. Acme Startup",
     clientIndustry: "e.g. FinTech / SaaS",
     projectType: "e.g. Dashboard Rewrite",
-    context: activeTab === 'linkedin' 
-      ? "e.g. Saw their recent post about engineering leadership."
-      : "e.g. Budget is tight, focus on speed to market.",
+    context: "e.g. Budget is tight, focus on speed to market.",
   }
 
   return (
@@ -189,7 +187,7 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
           ) : (
             <span className="flex items-center gap-2 text-white">
               <Zap size={16} fill="currentColor" className="text-[#A78BFA] group-hover:scale-110 transition-transform" />
-              Generate {activeTab === 'email' ? 'Email' : activeTab === 'proposal' ? 'Proposal' : activeTab === 'linkedin' ? 'LinkedIn Message' : 'Sequence'}
+              Generate Cold Email
             </span>
           )}
         </button>

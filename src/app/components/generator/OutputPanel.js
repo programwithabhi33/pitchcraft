@@ -20,7 +20,7 @@ function MarkdownText({ text }) {
   )
 }
 
-export default function OutputPanel({ isGenerating, outputData, activeTab, onRegenerate, lastFormData }) {
+export default function OutputPanel({ isGenerating, outputData, onRegenerate, lastFormData }) {
   const [copied, setCopied] = useState(false)
   const [saved, setSaved] = useState(false)
 
@@ -68,8 +68,8 @@ export default function OutputPanel({ isGenerating, outputData, activeTab, onReg
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          type: activeTab === 'email' ? 'cold_email' : activeTab,
-          tone: lastFormData?.tone || 'Friendly',
+          type: 'cold_email',
+          tone: lastFormData?.tone || 'friendly',
           inputs: lastFormData,
           content: outputData.body,
           model: 'groq/llama-3.3-70b',
@@ -133,15 +133,6 @@ export default function OutputPanel({ isGenerating, outputData, activeTab, onReg
                 <span className="hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
               </button>
 
-              {activeTab === 'proposal' && (
-                <button
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#27272A] text-[#E4E4E7] hover:bg-[#3F3F46] transition-colors border border-transparent"
-                >
-                  <Download size={14} />
-                  <span className="hidden sm:inline">PDF</span>
-                </button>
-              )}
-
               <button
                 onClick={handleSave}
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
@@ -178,7 +169,7 @@ export default function OutputPanel({ isGenerating, outputData, activeTab, onReg
             </div>
             <h3 className="text-lg font-bold text-[#F4F4F5]">Awaiting Your Brief</h3>
             <p className="text-sm text-[#A1A1AA] mt-1 max-w-sm">
-              Fill out the form and hit Generate. Your polished {activeTab === 'proposal' ? 'proposal' : 'copy'} will stream right here.
+              Fill out the form and hit Generate. Your polished copy will stream right here.
             </p>
           </div>
         )}
@@ -186,9 +177,7 @@ export default function OutputPanel({ isGenerating, outputData, activeTab, onReg
         {/* Shimmer skeleton while generating from scratch */}
         {isGenerating && !outputData && (
           <div className="space-y-6 max-w-2xl animate-pulse">
-            {activeTab === 'email' && (
-              <div className="w-full h-24 bg-[#27272A]/50 rounded-xl mb-8" />
-            )}
+            <div className="w-full h-24 bg-[#27272A]/50 rounded-xl mb-8" />
             <div className="w-3/4 h-4 bg-[#27272A]/50 rounded mb-4" />
             <div className="w-full h-4 bg-[#27272A]/50 rounded" />
             <div className="w-full h-4 bg-[#27272A]/50 rounded" />
@@ -208,7 +197,7 @@ export default function OutputPanel({ isGenerating, outputData, activeTab, onReg
             className="max-w-2xl mx-auto space-y-8"
           >
             {/* Subject Lines Box (Only for emails with multiple subject lines) */}
-            {activeTab === 'email' && outputData.subjects && (
+            {outputData.subjects && (
               <div className="bg-[#1E1033]/40 border border-[#7C3AED]/30 rounded-xl p-5 shadow-[0_8px_32px_rgba(124,58,237,0.05)]">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#A78BFA] mb-3 flex items-center gap-1.5">
                   <Lightbulb size={14} /> Generated Subject Lines

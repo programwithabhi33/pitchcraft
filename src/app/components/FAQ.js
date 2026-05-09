@@ -7,7 +7,7 @@ const faqs = [
     id: 'faq-1',
     question: 'Do I need any writing skills to use PitchCraft?',
     answer:
-      'Not at all. You just fill in 4 fields: who you are, what you offer, the client\'s name, and the project type. PitchCraft generates the complete copy — subject line, email, proposal, and follow-ups — in native-level English.',
+      'Not at all. You just fill in 4 fields: who you are, what you offer, the client\'s name, and the project type. PitchCraft generates high-conversion outreach copy in native-level English.',
   },
   {
     id: 'faq-2',
@@ -17,9 +17,9 @@ const faqs = [
   },
   {
     id: 'faq-3',
-    question: 'How is the proposal PDF generated?',
+    question: 'How do I use the generated emails?',
     answer:
-      'The AI builds a 1-page proposal with your scope, deliverables, timeline, pricing, and credential summary. You can review and edit before exporting to a ready-to-send PDF — no Word, no Canva, no design skills needed.',
+      'Once generated, you can copy the text with one click and paste it into your email client (Gmail, Outlook, etc.). We recommend doing a quick final review to add any hyper-specific personal touches.',
   },
   {
     id: 'faq-4',
@@ -29,15 +29,15 @@ const faqs = [
   },
   {
     id: 'faq-5',
-    question: 'Is there a limit on how many proposals I can generate?',
+    question: 'Is there a limit on how many emails I can generate?',
     answer:
-      'Free plan: 5 emails and 2 PDFs per month. Pro plan: unlimited emails, proposals, follow-ups, and LinkedIn messages. Team plan: unlimited output for up to 8 team members with shared brand settings.',
+      'Free plan: 10 emails per month. Pro plan: unlimited emails and priority generation.',
   },
   {
     id: 'faq-6',
     question: 'What if I\'m not happy with the output?',
     answer:
-      'You can regenerate with a different tone or brief at any time. Pro users get 3 tone variants per generation. If you\'re still not satisfied, we offer a 7-day money-back guarantee on all paid plans — no questions asked.',
+      'You can regenerate with a different tone or brief at any time. Pro users get priority processing. If you\'re still not satisfied, we offer a 7-day money-back guarantee on all paid plans — no questions asked.',
   },
 ]
 
@@ -79,7 +79,7 @@ function FAQItem({ faq }) {
 export default function FAQ() {
   return (
     <section id="faq" className="py-28 bg-[#09090B]">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <div className="text-center mb-14 space-y-4">

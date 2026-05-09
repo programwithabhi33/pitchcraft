@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
+import Output from "@/models/Output";
 import Groq from "groq-sdk";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
@@ -55,11 +56,10 @@ export async function POST(req) {
       1. Provide 3 catchy subject lines.
       2. Write a short, punchy body (max 150 to 200 words).
       3. Use a "Low Friction" call to action.
-      4. Avoid AI-sounding clichés (like "I hope this email finds you well" or "In today's fast-paced world").
+      4. Avoid AI-sounding clichés.
       5. Strictly follow the tone: ${tone}.
-      6. Output format: JSON-like structure with "subjects" (array of 3 strings) and "body" (string).
-      7. Make sure that the email has proper paragraphs if and have followed the professionalism.
-      8. Also the email should be that kind of email that one one want to avoid the email to read it.
+      6. Output format: JSON-object with "subjects" (array of 3 strings) and "body" (string).
+      7. Make sure that the the email has proper paragraphs and should be professional to send directly to the client.
     `;
 
     const chatCompletion = await groq.chat.completions.create({
@@ -74,6 +74,16 @@ export async function POST(req) {
     });
 
     const result = JSON.parse(chatCompletion.choices[0].message.content);
+
+    // AUTO-SAVE: Save to history immediately so user doesn't lose it
+    await Output.create({
+      userId: user._id,
+      type: "cold_email",
+      tone: tone.toLowerCase(),
+      inputs: { role, service, clientName, industry, context },
+      content: result.body,
+      model: "groq/llama-3.3-70b",
+    });
 
     // Increment usage
     user.usageCount += 1;

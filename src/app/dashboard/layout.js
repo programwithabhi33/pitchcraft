@@ -1,9 +1,8 @@
 import Sidebar from '@/app/components/dashboard/Sidebar'
-import UpgradeBanner from '@/app/components/dashboard/UpgradeBanner'
 
 export const metadata = {
   title: 'Dashboard – PitchCraft AI',
-  description: 'Your PitchCraft AI workspace. Generate cold emails, proposals, and follow-ups.',
+  description: 'Your PitchCraft AI workspace. Generate high-conversion cold emails in seconds.',
 }
 
 export default function DashboardLayout({ children }) {
@@ -17,9 +16,6 @@ export default function DashboardLayout({ children }) {
         <div className="flex-1 overflow-y-auto">
           {children}
         </div>
-
-        {/* Sticky upgrade banner at bottom */}
-        <UpgradeBanner userPlan="free" />
       </div>
     </div>
   )
