@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Pencil, Trash2, Mail, FileText, Clock, ChevronDown, CheckCheck } from 'lucide-react'
+import { Copy, Trash2, Mail, CheckCheck } from 'lucide-react'
 import useSWR from 'swr'
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
@@ -145,8 +145,7 @@ function EmptyState() {
 }
 
 export default function RecentOutputs() {
-  const { data: outputs, error, mutate, isLoading } = useSWR('/api/outputs', fetcher)
-  const [showAll, setShowAll] = useState(false)
+  const { data: outputs, isLoading, mutate } = useSWR('/api/outputs', fetcher)
 
   if (isLoading) {
     return (
@@ -158,48 +157,35 @@ export default function RecentOutputs() {
     )
   }
 
-  const list = outputs || []
-  const visible = showAll ? list : list.slice(0, 4)
+  const list = (outputs || []).slice(0, 4) // Always limit to 4 on dashboard
 
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <h2 className="text-base font-bold text-[#F4F4F5]">Recent Outputs</h2>
-          {list.length > 0 && (
-            <span className="badge badge-violet text-[9px] px-2 py-0.5">{list.length}</span>
-          )}
         </div>
-        {list.length > 0 && (
+        {(outputs?.length > 0) && (
           <a
             href="/dashboard/saved"
             className="text-xs text-[#7C3AED] hover:text-[#A78BFA] font-medium transition-colors"
           >
-            View all →
+            View Library →
           </a>
         )}
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <AnimatePresence>
+        <AnimatePresence mode='popLayout'>
           {list.length === 0 ? (
             <EmptyState key="empty" />
           ) : (
-            visible.map((output, i) => (
+            list.map((output, i) => (
               <OutputCard key={output._id} output={output} index={i} mutate={mutate} />
             ))
           )}
         </AnimatePresence>
       </div>
-
-      {list.length > 4 && !showAll && (
-        <motion.button
-          onClick={() => setShowAll(true)}
-          className="w-full py-2.5 rounded-xl border border-[#27272A] text-xs font-medium text-[#71717A] hover:text-[#F4F4F5] hover:border-[#3F3F46] transition-all flex items-center justify-center gap-1.5"
-        >
-          Show more <ChevronDown size={12} />
-        </motion.button>
-      )}
     </section>
   )
 }
