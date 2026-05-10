@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
-import { User, Briefcase, Building2, Target, Lightbulb, Zap, MessageSquare } from 'lucide-react'
+import { User, Briefcase, Building2, Target, Lightbulb, Zap, MessageSquare, AlertCircle } from 'lucide-react'
 
 // Tone selector options
 const TONES = [
@@ -12,8 +12,8 @@ const TONES = [
   { id: 'Bold', label: 'Bold' },
 ]
 
-export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
-  const { register, handleSubmit } = useForm({
+export default function GeneratorForm({ isGenerating, onGenerate }) {
+  const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       role: '',
       service: '',
@@ -58,11 +58,14 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
             <div className="relative">
               <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
               <input
-                {...register('role')}
+                {...register('role', { required: 'Please enter your name or role' })}
                 placeholder={placeholders.role}
-                className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] focus:shadow-[0_0_0_2px_rgba(124,58,237,0.15)] transition-all"
+                className={`w-full bg-[#18181B] border rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none transition-all ${
+                  errors.role ? 'border-rose-500/50 focus:border-rose-500' : 'border-[#27272A] focus:border-[#7C3AED]'
+                }`}
               />
             </div>
+            {errors.role && <p className="text-[10px] text-rose-500 mt-1 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.role.message}</p>}
           </div>
           
           <div className="space-y-1">
@@ -70,11 +73,14 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
             <div className="relative">
               <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
               <input
-                {...register('service')}
+                {...register('service', { required: 'Please enter what you offer' })}
                 placeholder={placeholders.service}
-                className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] focus:shadow-[0_0_0_2px_rgba(124,58,237,0.15)] transition-all"
+                className={`w-full bg-[#18181B] border rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none transition-all ${
+                  errors.service ? 'border-rose-500/50 focus:border-rose-500' : 'border-[#27272A] focus:border-[#7C3AED]'
+                }`}
               />
             </div>
+            {errors.service && <p className="text-[10px] text-rose-500 mt-1 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.service.message}</p>}
           </div>
         </div>
 
@@ -89,11 +95,14 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
               <input
-                {...register('clientName')}
+                {...register('clientName', { required: 'Please enter client name' })}
                 placeholder={placeholders.clientName}
-                className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] focus:shadow-[0_0_0_2px_rgba(124,58,237,0.15)] transition-all"
+                className={`w-full bg-[#18181B] border rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none transition-all ${
+                  errors.clientName ? 'border-rose-500/50 focus:border-rose-500' : 'border-[#27272A] focus:border-[#7C3AED]'
+                }`}
               />
             </div>
+            {errors.clientName && <p className="text-[10px] text-rose-500 mt-1 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.clientName.message}</p>}
           </div>
           
           <div className="space-y-1">
@@ -101,11 +110,14 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
             <div className="relative">
               <Target className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
               <input
-                {...register('clientIndustry')}
+                {...register('clientIndustry', { required: 'Please enter industry' })}
                 placeholder={placeholders.clientIndustry}
-                className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] focus:shadow-[0_0_0_2px_rgba(124,58,237,0.15)] transition-all"
+                className={`w-full bg-[#18181B] border rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none transition-all ${
+                  errors.clientIndustry ? 'border-rose-500/50 focus:border-rose-500' : 'border-[#27272A] focus:border-[#7C3AED]'
+                }`}
               />
             </div>
+            {errors.clientIndustry && <p className="text-[10px] text-rose-500 mt-1 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.clientIndustry.message}</p>}
           </div>
         </div>
       </div>
@@ -125,7 +137,7 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
             <input
               {...register('projectType')}
               placeholder={placeholders.projectType}
-              className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] focus:shadow-[0_0_0_2px_rgba(124,58,237,0.15)] transition-all"
+              className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-9 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] transition-all"
             />
           </div>
         </div>
@@ -138,7 +150,7 @@ export default function GeneratorForm({ activeTab, isGenerating, onGenerate }) {
               {...register('context')}
               placeholder={placeholders.context}
               rows={3}
-              className="w-full bg-[#18181B] border border-[#27272A] rounded-xl pl-9 pr-4 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] focus:shadow-[0_0_0_2px_rgba(124,58,237,0.15)] transition-all resize-none"
+              className="w-full bg-[#18181B] border border-[#27272A] rounded-xl pl-9 pr-4 py-2.5 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] transition-all resize-none"
             />
           </div>
         </div>

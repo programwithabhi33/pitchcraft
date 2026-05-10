@@ -2,17 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Download, BookmarkPlus, RefreshCw, Sparkles, CheckCheck, Lightbulb } from 'lucide-react'
+import { Copy, BookmarkPlus, RefreshCw, Sparkles, CheckCheck, Lightbulb } from 'lucide-react'
 
 // Simple markdown formatter for bolding/newlines
 function MarkdownText({ text }) {
   if (!text) return null
   
-  // Quick split by double newlines for paragraphs
   return (
     <div className="space-y-4 text-sm text-[#D4D4D8] leading-relaxed whitespace-pre-wrap">
       {text.split('**').map((part, i) => {
-        // Even indices are normal text, odd indices are bold if formatted correctly
         if (i % 2 !== 0) return <strong key={i} className="text-[#F4F4F5] font-semibold">{part}</strong>
         return <span key={i}>{part}</span>
       })}
@@ -23,8 +21,6 @@ function MarkdownText({ text }) {
 export default function OutputPanel({ isGenerating, outputData, onRegenerate, lastFormData }) {
   const [copied, setCopied] = useState(false)
   const [saved, setSaved] = useState(false)
-
-  // Demo typing effect state for the body text
   const [displayedText, setDisplayedText] = useState('')
   
   useEffect(() => {
@@ -33,12 +29,10 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
       return
     }
 
-    // A fast typing effect to simulate AI streaming
     setDisplayedText('')
     let i = 0
     const fullText = outputData.body
     
-    // Typing speed based on chunk size to be fast but visible
     const interval = setInterval(() => {
       const charsPerTick = 5
       setDisplayedText(prev => prev + fullText.slice(i, i + charsPerTick))
@@ -46,7 +40,7 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
       
       if (i >= fullText.length) {
         clearInterval(interval)
-        setDisplayedText(fullText) // Ensure exact match at the end
+        setDisplayedText(fullText)
       }
     }, 15)
 
@@ -69,7 +63,7 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'cold_email',
-          tone: lastFormData?.tone || 'friendly',
+          tone: lastFormData?.tone?.toLowerCase() || 'friendly',
           inputs: lastFormData,
           content: outputData.body,
           model: 'groq/llama-3.3-70b',
@@ -88,7 +82,6 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
     }
   }
 
-  // Determine if it's completely empty
   const isEmpty = !isGenerating && !outputData
 
   return (
@@ -97,7 +90,6 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
       {/* Top Action Bar */}
       <div className="flex-shrink-0 flex items-center justify-between p-4 border-b border-[#27272A] bg-[#18181B]/80 backdrop-blur-sm z-10 min-h-[64px]">
         
-        {/* Status */}
         <div className="flex items-center gap-2">
           {isGenerating ? (
             <span className="badge text-[#A78BFA] bg-[#7C3AED]/10 border border-[#7C3AED]/20">
@@ -106,14 +98,13 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
             </span>
           ) : outputData ? (
             <span className="badge text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20">
-              Generated Ready
+              Ready
             </span>
           ) : (
-            <span className="text-xs text-[#52525B] font-medium px-2">Ready to write</span>
+            <span className="text-xs text-[#52525B] font-medium px-2">Awaiting brief</span>
           )}
         </div>
 
-        {/* Action Buttons (visible only when not generating and have data) */}
         <AnimatePresence>
           {!isGenerating && outputData && (
             <motion.div
@@ -174,7 +165,6 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
           </div>
         )}
 
-        {/* Shimmer skeleton while generating from scratch */}
         {isGenerating && !outputData && (
           <div className="space-y-6 max-w-2xl animate-pulse">
             <div className="w-full h-24 bg-[#27272A]/50 rounded-xl mb-8" />
@@ -182,21 +172,15 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
             <div className="w-full h-4 bg-[#27272A]/50 rounded" />
             <div className="w-full h-4 bg-[#27272A]/50 rounded" />
             <div className="w-5/6 h-4 bg-[#27272A]/50 rounded" />
-            
-            <div className="w-2/3 h-4 bg-[#27272A]/50 rounded mt-8 mb-4" />
-            <div className="w-full h-4 bg-[#27272A]/50 rounded" />
-            <div className="w-4/5 h-4 bg-[#27272A]/50 rounded" />
           </div>
         )}
 
-        {/* Output rendering */}
         {!isEmpty && outputData && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="max-w-2xl mx-auto space-y-8"
           >
-            {/* Subject Lines Box (Only for emails with multiple subject lines) */}
             {outputData.subjects && (
               <div className="bg-[#1E1033]/40 border border-[#7C3AED]/30 rounded-xl p-5 shadow-[0_8px_32px_rgba(124,58,237,0.05)]">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#A78BFA] mb-3 flex items-center gap-1.5">
@@ -213,25 +197,20 @@ export default function OutputPanel({ isGenerating, outputData, onRegenerate, la
               </div>
             )}
 
-            {/* Main Body Text with simulated typing */}
             <div className="relative">
               <MarkdownText text={displayedText} />
-              
-              {/* Typewriter Cursor */}
               {displayedText.length < outputData.body.length && (
                 <span className="inline-block w-1.5 h-4 bg-[#A78BFA] ml-1 animate-pulse" />
               )}
             </div>
-            
           </motion.div>
         )}
       </div>
 
-      {/* Footer / Token indicator */}
       {!isEmpty && outputData && (
         <div className="flex-shrink-0 p-3 border-t border-[#27272A] bg-[#09090B]">
-          <p className="text-center text-[10px] text-[#52525B] font-mono">
-            ~142 tokens used <span className="mx-1">•</span> 1 output credit
+          <p className="text-center text-[10px] text-[#52525B] font-mono uppercase tracking-widest">
+            AI GENERATED OUTREACH
           </p>
         </div>
       )}
