@@ -46,6 +46,11 @@ const UserSchema = new mongoose.Schema({
   senderName: String,
   senderRole: String,
   senderCompany: String,
+  senderWebsite: String,
+  senderTone: {
+    type: String,
+    default: 'Friendly',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

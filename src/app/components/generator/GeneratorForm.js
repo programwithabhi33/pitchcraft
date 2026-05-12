@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { User, Briefcase, Building2, Target, Lightbulb, Zap, MessageSquare, AlertCircle } from 'lucide-react'
+import useSWR from 'swr'
+
+const fetcher = (url) => fetch(url).then((res) => res.json())
 
 // Tone selector options
 const TONES = [
@@ -13,7 +16,9 @@ const TONES = [
 ]
 
 export default function GeneratorForm({ isGenerating, onGenerate }) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { data: user } = useSWR('/api/user/usage', fetcher)
+  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
       role: '',
       service: '',
@@ -27,6 +32,22 @@ export default function GeneratorForm({ isGenerating, onGenerate }) {
 
   // We keep a local state for the radio selector so we can easily map the UI
   const [selectedTone, setSelectedTone] = useState('Friendly')
+
+  // Pre-fill form when user data loads
+  useEffect(() => {
+    if (user) {
+      reset({
+        role: user.senderName || user.name || '',
+        service: user.senderRole || '', // Using senderRole as service title for MVP
+        clientName: '',
+        clientIndustry: '',
+        projectType: '',
+        context: '',
+        tone: user.senderTone || 'Friendly',
+      })
+      setSelectedTone(user.senderTone || 'Friendly')
+    }
+  }, [user, reset])
 
   const onSubmit = (data) => {
     onGenerate({ ...data, tone: selectedTone })
