@@ -132,7 +132,12 @@ export default function Sidebar() {
         <div className={`flex items-center gap-3 rounded-xl p-2 hover:bg-[#27272A] transition-colors cursor-pointer ${sidebarCollapsed ? 'justify-center' : ''}`}>
           <div className="relative flex-shrink-0">
             {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full border border-[#27272A]" />
+              <img 
+                src={user.avatar} 
+                alt={user.name} 
+                referrerPolicy="no-referrer"
+                className="w-8 h-8 rounded-full border border-[#27272A]" 
+              />
             ) : (
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] flex items-center justify-center text-white text-xs font-bold">
                 {user?.name?.charAt(0) || 'U'}

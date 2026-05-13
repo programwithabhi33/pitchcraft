@@ -3,138 +3,105 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  User, Send, ShieldAlert, ChevronRight, Loader2, CheckCircle2
+  User, ShieldAlert, Loader2, CheckCircle2, Briefcase, Sparkles, X, AlertTriangle
 } from 'lucide-react'
+import { signOut } from 'next-auth/react'
 import useSWR from 'swr'
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
-// --- Profile Section ---
+// --- Confirmation Modal ---
 
-function ProfileSection({ user, onUpdate }) {
-  const [isSaving, setIsSaving] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-  })
-
-  useEffect(() => {
-    if (user) {
-      setFormData({ name: user.name, email: user.email })
-    }
-  }, [user])
-
-  const handleSave = async (e) => {
-    e.preventDefault()
-    setIsSaving(true)
-    try {
-      const res = await fetch('/api/user/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: formData.name }),
-      })
-      if (res.ok) {
-        setSuccess(true)
-        setTimeout(() => setSuccess(false), 3000)
-        onUpdate() // Refresh SWR cache globally
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setIsSaving(false)
-    }
-  }
+function DeleteAccountModal({ isOpen, onClose, onConfirm, isDeleting }) {
+  if (!isOpen) return null
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-      <div>
-        <h2 className="text-xl font-bold text-[#F4F4F5]">Profile Setup</h2>
-        <p className="text-sm text-[#71717A] mt-1">Manage your basic account details.</p>
-      </div>
-
-      <div className="flex items-center gap-6 pb-6 border-b border-[#27272A]">
-        <div className="relative group cursor-default">
-          {user?.avatar ? (
-            <img src={user.avatar} className="w-20 h-20 rounded-full border-2 border-[#27272A]" alt={user.name} />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] flex items-center justify-center text-white text-2xl font-bold">
-              {user?.name?.charAt(0) || 'U'}
-            </div>
-          )}
-        </div>
-        <div>
-          <p className="text-sm font-bold text-[#F4F4F5]">{user?.name}</p>
-          <p className="text-xs text-[#A1A1AA]">{user?.email}</p>
-        </div>
-      </div>
-
-      <form onSubmit={handleSave} className="space-y-4 max-w-lg">
-        <div className="space-y-1">
-          <label className="text-xs text-[#A1A1AA] font-medium ml-1">Display Name</label>
-          <input 
-            type="text" 
-            value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
-            className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-4 py-2.5 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED]" 
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs text-[#A1A1AA] font-medium ml-1">Email Address (Read-only)</label>
-          <input 
-            type="email" 
-            value={formData.email}
-            disabled
-            className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-4 py-2.5 text-sm text-[#52525B] cursor-not-allowed outline-none" 
-          />
-        </div>
-        
-        <button 
-          type="submit" 
-          disabled={isSaving}
-          className="btn-violet px-6 py-2.5 text-sm mt-4 flex items-center gap-2"
-        >
-          {isSaving ? <Loader2 size={16} className="animate-spin" /> : success ? <CheckCircle2 size={16} /> : null}
-          {isSaving ? 'Saving...' : success ? 'Saved!' : 'Save Changes'}
-        </button>
-      </form>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        className="absolute inset-0 bg-[#000]/80 backdrop-blur-sm"
+      />
       
-      <div className="pt-10">
-        <div className="p-5 bg-[#F43F5E]/5 border border-[#F43F5E]/20 rounded-2xl flex items-start justify-between gap-4">
-          <div>
-            <h3 className="text-sm font-bold text-[#F43F5E] flex items-center gap-2">
-              <ShieldAlert size={16} /> Delete Account
-            </h3>
-            <p className="text-xs text-[#A1A1AA] mt-1 max-w-sm">
-              Permanently remove your account and all your outreach data.
+      {/* Modal */}
+      <motion.div 
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        className="relative w-full max-w-md bg-[#18181B] border border-[#27272A] rounded-3xl p-8 shadow-2xl overflow-hidden"
+      >
+        {/* Warning Glow */}
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="flex flex-col items-center text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500">
+            <AlertTriangle size={32} />
+          </div>
+
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-[#F4F4F5]">Delete your account?</h2>
+            <p className="text-sm text-[#71717A] leading-relaxed">
+              This action is <span className="text-rose-500 font-bold uppercase tracking-tight">permanent</span>. 
+              You will lose access to all your saved emails and outreach history forever.
             </p>
           </div>
-          <button className="px-4 py-2 rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 text-xs font-semibold transition-colors">
-            Delete Account
-          </button>
+
+          <div className="flex flex-col w-full gap-3">
+            <button
+              onClick={onConfirm}
+              disabled={isDeleting}
+              className="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-rose-600/20 active:scale-[0.98]"
+            >
+              {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <ShieldAlert size={18} />}
+              {isDeleting ? 'Deleting Account...' : 'Yes, Delete Everything'}
+            </button>
+            <button
+              onClick={onClose}
+              disabled={isDeleting}
+              className="w-full py-3.5 bg-[#27272A] hover:bg-[#3F3F46] text-[#F4F4F5] font-semibold rounded-xl transition-all"
+            >
+              Nevermind, Keep My Data
+            </button>
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   )
 }
 
-// --- Sender Profile Section ---
+// --- Main Settings Component ---
 
-function SenderProfileSection({ user, onUpdate }) {
+export default function SettingsPage() {
+  const { data: user, mutate, isLoading: isFetching } = useSWR('/api/user/usage', fetcher, {
+    revalidateOnFocus: true,
+    revalidateOnMount: true
+  })
+  
   const [isSaving, setIsSaving] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  
   const [formData, setFormData] = useState({
-    senderName: user?.senderName || '',
-    senderRole: user?.senderRole || '',
-    senderTone: user?.senderTone || 'Friendly',
+    name: '',
+    senderRole: '',
+    senderTone: 'Friendly',
   })
 
+  // Robust initialization from SWR data
   useEffect(() => {
     if (user) {
+      const normalizedTone = user.senderTone 
+        ? (user.senderTone.charAt(0).toUpperCase() + user.senderTone.slice(1).toLowerCase()) 
+        : 'Friendly';
+
       setFormData({
-        senderName: user.senderName || '',
+        name: user.name || '',
         senderRole: user.senderRole || '',
-        senderTone: user.senderTone || 'Friendly',
+        senderTone: normalizedTone,
       })
     }
   }, [user])
@@ -142,149 +109,203 @@ function SenderProfileSection({ user, onUpdate }) {
   const handleSave = async (e) => {
     e.preventDefault()
     setIsSaving(true)
+    setSuccess(false)
+    
     try {
       const res = await fetch('/api/user/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ 
+          name: formData.name,
+          senderName: formData.name, 
+          senderRole: formData.senderRole,
+          senderTone: formData.senderTone
+        }),
       })
+
       if (res.ok) {
         setSuccess(true)
         setTimeout(() => setSuccess(false), 3000)
-        onUpdate()
+        await mutate()
+      } else {
+        alert('Failed to save settings. Please try again.')
       }
     } catch (error) {
-      console.error(error)
+      console.error('Settings save error:', error)
+      alert('An error occurred while saving.')
     } finally {
       setIsSaving(false)
     }
   }
 
-  return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-      <div>
-        <h2 className="text-xl font-bold text-[#F4F4F5]">Sender Profile</h2>
-        <p className="text-sm text-[#71717A] mt-1">These details pre-fill the Generator form.</p>
-      </div>
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true)
+    try {
+      const res = await fetch('/api/user/delete', { method: 'DELETE' })
+      if (res.ok) {
+        // Log out user and redirect to home after successful deletion
+        signOut({ callbackUrl: '/' })
+      } else {
+        alert('Failed to delete account. Please contact support.')
+        setIsDeleting(false)
+        setIsModalOpen(false)
+      }
+    } catch (error) {
+      console.error('Account deletion error:', error)
+      alert('An error occurred during deletion.')
+      setIsDeleting(false)
+      setIsModalOpen(false)
+    }
+  }
 
-      <form onSubmit={handleSave} className="space-y-5 max-w-lg">
-        <div className="space-y-1">
-          <label className="text-xs text-[#A1A1AA] font-medium ml-1">Your Full Name</label>
-          <input 
-            type="text" 
-            value={formData.senderName}
-            onChange={(e) => setFormData({...formData, senderName: e.target.value})}
-            placeholder="e.g. Abhishek"
-            className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-4 py-2.5 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED]" 
-          />
-        </div>
-        
-        <div className="space-y-1">
-          <label className="text-xs text-[#A1A1AA] font-medium ml-1">Your Service / Title</label>
-          <input 
-            type="text" 
-            value={formData.senderRole}
-            onChange={(e) => setFormData({...formData, senderRole: e.target.value})}
-            placeholder="e.g. Full-Stack Developer"
-            className="w-full bg-[#18181B] border border-[#27272A] rounded-xl px-4 py-2.5 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED]" 
-          />
-        </div>
-
-        <div className="space-y-1 pt-2">
-          <label className="text-xs text-[#A1A1AA] font-medium ml-1 block mb-2">Default Tone</label>
-          <div className="flex items-center gap-2 bg-[#18181B] p-1 rounded-xl border border-[#27272A] w-fit">
-            {['Formal', 'Friendly', 'Bold'].map(tone => (
-              <button
-                key={tone}
-                type="button"
-                onClick={() => setFormData({...formData, senderTone: tone})}
-                className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                  formData.senderTone === tone ? 'bg-[#27272A] text-[#F4F4F5]' : 'text-[#71717A] hover:text-[#A1A1AA]'
-                }`}
-              >
-                {tone}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        <button 
-          type="submit" 
-          disabled={isSaving}
-          className="btn-violet px-6 py-2.5 text-sm mt-4 flex items-center gap-2"
-        >
-          {isSaving ? <Loader2 size={16} className="animate-spin" /> : success ? <CheckCircle2 size={16} /> : null}
-          {isSaving ? 'Saving...' : success ? 'Saved!' : 'Save Sender Profile'}
-        </button>
-      </form>
-    </motion.div>
-  )
-}
-
-// --- Main Page Component ---
-
-const TABS = [
-  { id: 'profile', label: 'Profile', icon: User },
-  { id: 'sender', label: 'Sender Profile', icon: Send },
-]
-
-export default function SettingsPage() {
-  const { data: user, mutate } = useSWR('/api/user/usage', fetcher)
-  const [activeTab, setActiveTab] = useState('profile')
+  const TONE_OPTIONS = ['Formal', 'Friendly', 'Bold']
 
   return (
     <div className="flex flex-col min-h-full bg-[#09090B]">
+      {/* ── Page Header ── */}
       <div className="px-6 py-8 border-b border-[#27272A]">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold text-[#F4F4F5]">Settings</h1>
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-2xl font-bold text-[#F4F4F5]">Profile Settings</h1>
+          <p className="text-sm text-[#71717A] mt-1">Manage your identity and outreach defaults.</p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-8 p-6">
-          
-          <aside className="w-full md:w-64 flex-shrink-0">
-            <nav className="flex flex-col space-y-1">
-              {TABS.map(tab => {
-                const Icon = tab.icon
-                const isActive = activeTab === tab.id
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`relative flex items-center justify-between px-3 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${
-                      isActive 
-                        ? 'text-[#F4F4F5]' 
-                        : 'text-[#A1A1AA] hover:text-[#F4F4F5] hover:bg-[#27272A]/50'
-                    }`}
-                  >
-                    <div className="relative z-10 flex items-center gap-3">
-                      <Icon size={16} className={isActive ? 'text-[#A78BFA]' : 'text-[#71717A]'} />
-                      <span>{tab.label}</span>
+      <div className="flex-1 overflow-auto p-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-[#18181B] border border-[#27272A] rounded-2xl overflow-hidden shadow-xl">
+            
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              
+              {/* Left Column: Visuals */}
+              <div className="p-8 bg-[#1E1033]/20 border-b md:border-b-0 md:border-r border-[#27272A] flex flex-col items-center text-center space-y-4">
+                <div className="relative">
+                  {user?.avatar ? (
+                    <img 
+                      src={user.avatar} 
+                      referrerPolicy="no-referrer"
+                      className="w-24 h-24 rounded-3xl border-2 border-[#7C3AED]/50 shadow-[0_0_20px_rgba(124,58,237,0.2)]" 
+                      alt={user.name} 
+                    />
+                  ) : (
+                    <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] flex items-center justify-center text-white text-3xl font-bold">
+                      {user?.name?.charAt(0) || 'U'}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#F4F4F5]">{isFetching ? 'Loading...' : (user?.name || 'User')}</h3>
+                  <p className="text-[10px] text-[#52525B] font-medium uppercase tracking-widest mt-1">
+                    {user?.email}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column: Form */}
+              <div className="md:col-span-2 p-8">
+                <form onSubmit={handleSave} className="space-y-6">
+                  
+                  <div className="grid grid-cols-1 gap-5">
+                    {/* Full Name */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#A1A1AA] flex items-center gap-2">
+                        <User size={13} className="text-[#7C3AED]" /> Your Full Name
+                      </label>
+                      <input 
+                        type="text" 
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        className="w-full bg-[#09090B] border border-[#27272A] rounded-xl px-4 py-3 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED] transition-all" 
+                        placeholder="e.g. Abhishek Gupta"
+                      />
                     </div>
 
-                    {isActive && (
-                      <motion.div
-                        layoutId="settings-tab-bg"
-                        className="absolute inset-0 bg-[#27272A] border border-[#3F3F46] rounded-xl"
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    {/* Service/Title */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#A1A1AA] flex items-center gap-2">
+                        <Briefcase size={13} className="text-[#0EA5E9]" /> Your Service / Title
+                      </label>
+                      <input 
+                        type="text" 
+                        value={formData.senderRole}
+                        onChange={(e) => setFormData({...formData, senderRole: e.target.value})}
+                        className="w-full bg-[#09090B] border border-[#27272A] rounded-xl px-4 py-3 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED] transition-all" 
+                        placeholder="e.g. Full-Stack Developer"
                       />
-                    )}
-                  </button>
-                )
-              })}
-            </nav>
-          </aside>
+                    </div>
 
-          <main className="flex-1 min-w-0">
-            <AnimatePresence mode="wait">
-              {activeTab === 'profile' && <ProfileSection key="profile" user={user} onUpdate={mutate} />}
-              {activeTab === 'sender' && <SenderProfileSection key="sender" user={user} onUpdate={mutate} />}
-            </AnimatePresence>
-          </main>
+                    {/* Default Tone */}
+                    <div className="space-y-1.5 pt-2">
+                      <label className="text-xs font-bold uppercase tracking-wider text-[#A1A1AA] flex items-center gap-2 mb-2">
+                        <Sparkles size={13} className="text-[#F59E0B]" /> Default Tone
+                      </label>
+                      <div className="flex items-center gap-2 bg-[#09090B] p-1 rounded-xl border border-[#27272A] w-fit relative z-0">
+                        {TONE_OPTIONS.map(tone => {
+                          const isSelected = formData.senderTone.toLowerCase() === tone.toLowerCase();
+                          return (
+                            <button
+                              key={tone}
+                              type="button"
+                              onClick={() => setFormData({...formData, senderTone: tone})}
+                              className={`relative px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors duration-200 z-10 ${
+                                isSelected ? 'text-[#F4F4F5]' : 'text-[#71717A] hover:text-[#A1A1AA]'
+                              }`}
+                            >
+                              {isSelected && (
+                                <motion.div
+                                  layoutId="settings-tone-pill"
+                                  className="absolute inset-0 bg-[#27272A] border border-[#3F3F46] rounded-lg -z-10"
+                                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                                />
+                              )}
+                              <span className="relative z-10">{tone}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-[#27272A] flex items-center justify-between">
+                    <p className="text-[10px] text-[#52525B]">Last updated: {new Date().toLocaleDateString()}</p>
+                    <button 
+                      type="submit" 
+                      disabled={isSaving}
+                      className="btn-violet px-8 py-3 text-sm font-bold flex items-center gap-2 min-w-[160px] justify-center"
+                    >
+                      {isSaving ? <Loader2 size={16} className="animate-spin" /> : success ? <CheckCircle2 size={16} /> : null}
+                      {isSaving ? 'Saving...' : success ? 'Successfully Saved!' : 'Save Profile'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          {/* Minimal Danger Zone */}
+          <div className="mt-8 flex justify-center">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="group text-xs font-medium text-[#52525B] hover:text-rose-500 transition-colors flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-rose-500/5"
+            >
+              <ShieldAlert size={14} className="group-hover:animate-pulse" /> 
+              Delete your account and all data
+            </button>
+          </div>
 
         </div>
       </div>
+
+      {/* Confirmation Overlay */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <DeleteAccountModal 
+            isOpen={isModalOpen} 
+            onClose={() => setIsModalOpen(false)}
+            onConfirm={handleDeleteAccount}
+            isDeleting={isDeleting}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -8,7 +8,6 @@ import useSWR from 'swr'
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
-// Tone selector options
 const TONES = [
   { id: 'Formal', label: 'Formal' },
   { id: 'Friendly', label: 'Friendly' },
@@ -16,7 +15,11 @@ const TONES = [
 ]
 
 export default function GeneratorForm({ isGenerating, onGenerate }) {
-  const { data: user } = useSWR('/api/user/usage', fetcher)
+  // Use SWR with aggressive revalidation to catch settings changes
+  const { data: user } = useSWR('/api/user/usage', fetcher, {
+    revalidateOnFocus: true,
+    revalidateOnMount: true
+  })
   
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
@@ -30,22 +33,27 @@ export default function GeneratorForm({ isGenerating, onGenerate }) {
     }
   })
 
-  // We keep a local state for the radio selector so we can easily map the UI
   const [selectedTone, setSelectedTone] = useState('Friendly')
 
-  // Pre-fill form when user data loads
+  // Robust initialization and synchronization
   useEffect(() => {
     if (user) {
+      // Normalize capitalization (Settings uses capitalized, API returns raw)
+      const rawTone = user.senderTone || 'Friendly';
+      const normalizedTone = rawTone.charAt(0).toUpperCase() + rawTone.slice(1).toLowerCase();
+
       reset({
         role: user.senderName || user.name || '',
-        service: user.senderRole || '', // Using senderRole as service title for MVP
+        service: user.senderRole || '',
         clientName: '',
         clientIndustry: '',
         projectType: '',
         context: '',
-        tone: user.senderTone || 'Friendly',
+        tone: normalizedTone,
       })
-      setSelectedTone(user.senderTone || 'Friendly')
+      
+      // Update local state for visual button highlighting
+      setSelectedTone(normalizedTone)
     }
   }, [user, reset])
 
@@ -53,7 +61,6 @@ export default function GeneratorForm({ isGenerating, onGenerate }) {
     onGenerate({ ...data, tone: selectedTone })
   }
 
-  // Determine what placeholers to show
   const placeholders = {
     role: "e.g. Arjun, React Developer",
     service: "e.g. Frontend MVP Builds",
@@ -145,7 +152,6 @@ export default function GeneratorForm({ isGenerating, onGenerate }) {
 
       <div className="w-full h-px bg-[#27272A]" />
 
-      {/* Project specifics */}
       <div className="space-y-4">
         <h3 className="text-sm font-semibold text-[#A1A1AA] flex items-center gap-2 uppercase tracking-wide">
           <Lightbulb size={14} className="text-[#F59E0B]" /> Project Context
@@ -177,30 +183,32 @@ export default function GeneratorForm({ isGenerating, onGenerate }) {
         </div>
       </div>
 
-      {/* Tone & Submit row */}
       <div className="bg-[#18181B] border border-[#27272A] rounded-2xl p-4 flex flex-col gap-4">
         <div>
           <label className="text-xs text-[#A1A1AA] font-medium mb-2 block">Voice &amp; Tone</label>
-          <div className="flex items-center gap-2 bg-[#09090B] p-1 rounded-xl border border-[#27272A] w-fit">
-            {TONES.map(tone => (
-              <button
-                key={tone.id}
-                type="button"
-                onClick={() => setSelectedTone(tone.id)}
-                className={`relative px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors z-0 ${
-                  selectedTone === tone.id ? 'text-[#F4F4F5]' : 'text-[#71717A] hover:text-[#A1A1AA]'
-                }`}
-              >
-                {selectedTone === tone.id && (
-                  <motion.div
-                    layoutId="tone-selection"
-                    className="absolute inset-0 bg-[#27272A] border border-[#3F3F46] rounded-lg -z-10"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
-                {tone.label}
-              </button>
-            ))}
+          <div className="flex items-center gap-2 bg-[#09090B] p-1 rounded-xl border border-[#27272A] w-fit relative z-0">
+            {TONES.map(tone => {
+              const isSelected = selectedTone.toLowerCase() === tone.id.toLowerCase();
+              return (
+                <button
+                  key={tone.id}
+                  type="button"
+                  onClick={() => setSelectedTone(tone.id)}
+                  className={`relative px-4 py-1.5 text-xs font-semibold rounded-lg transition-colors z-10 ${
+                    isSelected ? 'text-[#F4F4F5]' : 'text-[#71717A] hover:text-[#A1A1AA]'
+                  }`}
+                >
+                  {isSelected && (
+                    <motion.div
+                      layoutId="generator-tone-selection"
+                      className="absolute inset-0 bg-[#27272A] border border-[#3F3F46] rounded-lg -z-10"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{tone.label}</span>
+                </button>
+              )
+            })}
           </div>
         </div>
 
