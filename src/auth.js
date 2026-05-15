@@ -24,6 +24,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error("No user found with this email");
         }
 
+        if (!user.isVerified) {
+          throw new Error("Please verify your email before logging in");
+        }
+
         const isValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isValid) {

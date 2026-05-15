@@ -14,7 +14,6 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    // Null if Google OAuth login
   },
   googleId: {
     type: String,
@@ -22,6 +21,18 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationOTP: {
+    type: String,
+  },
+  verificationOTPExpires: {
+    type: Date,
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
   plan: {
     type: String,
     enum: ['free'],
@@ -58,4 +69,11 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.User || mongoose.model('User', UserSchema);
+// Force refresh the model in development to ensure schema changes are picked up
+if (mongoose.models.User) {
+  delete mongoose.models.User;
+}
+
+const User = mongoose.model('User', UserSchema);
+
+export default User;
