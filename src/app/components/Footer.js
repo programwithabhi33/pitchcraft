@@ -2,9 +2,9 @@
 
 const footerLinks = {
   Product: [
-    { id: 'footer-features', label: 'Features', href: '#features' },
-    { id: 'footer-pricing', label: 'Pricing', href: '#pricing' },
-    { id: 'footer-how-it-works', label: 'How It Works', href: '#how-it-works' },
+    { id: 'footer-features', label: 'Features', href: '/#features' },
+    { id: 'footer-pricing', label: 'Pricing', href: '/#pricing' },
+    { id: 'footer-how-it-works', label: 'How It Works', href: '/#how-it-works' },
     { id: 'footer-changelog', label: 'Changelog', href: '/' },
   ],
   Company: [
@@ -14,8 +14,8 @@ const footerLinks = {
     { id: 'footer-contact', label: 'Contact', href: '/' },
   ],
   Legal: [
-    { id: 'footer-privacy', label: 'Privacy Policy', href: '/' },
-    { id: 'footer-terms', label: 'Terms of Service', href: '/' },
+    { id: 'footer-privacy', label: 'Privacy Policy', href: '/privacy' },
+    { id: 'footer-terms', label: 'Terms of Service', href: '/terms' },
     { id: 'footer-refund', label: 'Refund Policy', href: '/' },
   ],
 }
@@ -70,13 +70,13 @@ export default function Footer() {
 
                </h2>
                <p className="text-[#A1A1AA] text-base max-w-lg mx-auto">
-                 Join 2,400+ freelancers already using PitchCraft to win projects with AI-powered outreach.
+                 Generate high-conversion cold emails in 30 seconds.
                  Start free — no credit card required.
                </p>
                <a
                  href="/auth"
                  id="footer-cta-btn"
-                 className="btn-violet inline-flex items-center gap-2.5 text-base px-8 py-3.5"
+                 className="btn-violet inline-flex items-center gap-2.5 text-base px-8 py-3.5 cursor-pointer"
                >
                  <span className="flex items-center gap-2.5">
                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +123,7 @@ export default function Footer() {
                      id={link.id}
                      href={url}
                      aria-label={link.label}
-                     className="w-8 h-8 rounded-lg bg-[#18181B] border border-[#3F3F46] flex items-center justify-center text-[#A1A1AA] hover:text-[#A78BFA] hover:border-[#7C3AED]/40 transition-all"
+                     className="w-8 h-8 rounded-lg bg-[#18181B] border border-[#3F3F46] flex items-center justify-center text-[#A1A1AA] hover:text-[#A78BFA] hover:border-[#7C3AED]/40 transition-all cursor-pointer"
                    >
                      {link.icon}
                    </a>
@@ -142,7 +142,7 @@ export default function Footer() {
                     <a
                       id={link.id}
                       href={link.href}
-                      className="text-[#A1A1AA] hover:text-[#F4F4F5] text-sm transition-colors"
+                      className="text-[#A1A1AA] hover:text-[#F4F4F5] text-sm transition-colors cursor-pointer"
                     >
                       {link.label}
                     </a>
