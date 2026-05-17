@@ -75,11 +75,14 @@ export async function POST(req) {
 
     const result = JSON.parse(chatCompletion.choices[0].message.content);
 
+    // Standardize tone to Capitalized format to match DB Enum
+    const normalizedTone = tone.charAt(0).toUpperCase() + tone.slice(1).toLowerCase();
+
     // AUTO-SAVE: Save to history immediately so user doesn't lose it
     await Output.create({
       userId: user._id,
       type: "cold_email",
-      tone: tone.toLowerCase(),
+      tone: normalizedTone,
       inputs: { role, service, clientName, industry, context },
       content: result.body,
       model: "groq/llama-3.3-70b",

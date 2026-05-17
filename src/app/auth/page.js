@@ -31,16 +31,31 @@ import {
 // ─── Zod schemas ──────────────────────────────────────────────────────────────
 
 const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-  password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(6, "Password must be at least 6 characters"),
   rememberMe: z.boolean().optional(),
 });
 
 const signUpSchema = z
   .object({
-    name: z.string().min(1, "Full name is required").min(2, "Name must be at least 2 characters"),
-    email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
-    password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
+    name: z
+      .string()
+      .min(1, "Full name is required")
+      .min(2, "Name must be at least 2 characters"),
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Please enter a valid email address"),
+    password: z
+      .string()
+      .min(1, "Password is required")
+      .min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     rememberMe: z.boolean().optional(),
   })
@@ -50,7 +65,10 @@ const signUpSchema = z
   });
 
 const forgotPasswordSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Please enter a valid email address"),
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Please enter a valid email address"),
 });
 
 // ─── UI Components ───────────────────────────────────────────────────────────
@@ -281,7 +299,7 @@ function SignUpForm({ onVerifyRequired }) {
       />
       <FloatingInput
         id="signup-email"
-        label="Work email"
+        label="Email address"
         type="email"
         icon={Mail}
         error={errors.email?.message}
@@ -348,7 +366,7 @@ function OTPVerifyForm({ email }) {
       if (!otp[i] && i > 0) {
         // If current is empty, go to previous and clear it
         const newOtp = [...otp];
-        newOtp[i-1] = "";
+        newOtp[i - 1] = "";
         setOtp(newOtp);
         inputRefs.current[i - 1].focus();
       } else if (otp[i]) {
@@ -397,9 +415,7 @@ function OTPVerifyForm({ email }) {
   return (
     <form onSubmit={handleVerify} className="space-y-6" noValidate>
       <div className="text-center space-y-2">
-        <p className="text-sm text-[#71717A]">
-          We sent a 6-digit code to
-        </p>
+        <p className="text-sm text-[#71717A]">We sent a 6-digit code to</p>
         <p className="text-sm font-bold text-[#A78BFA] bg-[#7C3AED]/10 px-3 py-1 rounded-full inline-block">
           {email}
         </p>
@@ -422,7 +438,7 @@ function OTPVerifyForm({ email }) {
         ))}
       </div>
       {error && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center text-xs text-rose-500 font-semibold bg-rose-500/10 py-2 rounded-lg border border-rose-500/20"
@@ -433,7 +449,7 @@ function OTPVerifyForm({ email }) {
       <button
         id="verify-submit-btn"
         type="submit"
-        disabled={isSubmitting || otp.some(d => !d)}
+        disabled={isSubmitting || otp.some((d) => !d)}
         className="w-full btn-violet py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
       >
         {isSubmitting ? (
@@ -486,7 +502,7 @@ function ForgotPasswordForm({ onBack }) {
   return (
     <div className="space-y-4">
       {success ? (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           className="text-center py-6 space-y-4"
@@ -508,7 +524,11 @@ function ForgotPasswordForm({ onBack }) {
           </button>
         </motion.div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+          noValidate
+        >
           <button
             type="button"
             onClick={onBack}
@@ -710,9 +730,20 @@ export default function AuthPage() {
           </div>
           <p className="text-center text-[10px] text-[#52525B] mt-6">
             By continuing, you agree to our{" "}
-            <Link href="/terms" className="text-[#7C3AED] hover:text-[#A78BFA] transition-colors font-medium underline underline-offset-2 cursor-pointer">Terms of Service</Link>{" "}
+            <Link
+              href="/terms"
+              className="text-[#7C3AED] hover:text-[#A78BFA] transition-colors font-medium underline underline-offset-2 cursor-pointer"
+            >
+              Terms of Service
+            </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#7C3AED] hover:text-[#A78BFA] transition-colors font-medium underline underline-offset-2 cursor-pointer">Privacy Policy</Link>.
+            <Link
+              href="/privacy"
+              className="text-[#7C3AED] hover:text-[#A78BFA] transition-colors font-medium underline underline-offset-2 cursor-pointer"
+            >
+              Privacy Policy
+            </Link>
+            .
           </p>
         </motion.div>
       </div>
