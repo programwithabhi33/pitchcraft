@@ -6,7 +6,6 @@ import Link from 'next/link'
 const navLinks = [
   { href: '/#features', label: 'Features' },
   { href: '/#how-it-works', label: 'How It Works' },
-  { href: '/#pricing', label: 'Pricing' },
   { href: '/#faq', label: 'FAQ' },
 ]
 
@@ -14,7 +13,6 @@ export default function Navbar({ theme = 'dark' }) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  // Determine styles based on theme
   const isLight = theme === 'light'
   const textColor = isLight ? 'text-zinc-600' : 'text-[#A1A1AA]'
   const hoverTextColor = isLight ? 'hover:text-zinc-900' : 'hover:text-[#F4F4F5]'
@@ -31,7 +29,7 @@ export default function Navbar({ theme = 'dark' }) {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-        ? `${bgScrolled} backdrop-blur-md border-b-[#3F3F46]/60 shadow-sm`
+        ? `${bgScrolled} backdrop-blur-md border-b border-[#3F3F46]/60 shadow-sm`
         : `bg-transparent`
         }`}
     >
@@ -70,16 +68,16 @@ export default function Navbar({ theme = 'dark' }) {
           <Link
             href="/auth"
             id="nav-login-btn"
-            className={`${btnOutlineClass} border px-4 py-2 rounded-lg text-sm font-medium transition-colors`}
+            className={`${btnOutlineClass} border px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer`}
           >
             Log in
           </Link>
           <Link
             href="/auth"
-            id="nav-start-free-btn"
-            className="btn-violet text-sm px-5 py-2 block"
+            id="nav-start-btn"
+            className="btn-violet text-sm px-5 py-2 block cursor-pointer"
           >
-            <span>Start Free</span>
+            <span>Get Started</span>
           </Link>
         </div>
 
@@ -87,7 +85,7 @@ export default function Navbar({ theme = 'dark' }) {
         <button
           id="nav-mobile-menu-btn"
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-[#A1A1AA] hover:text-[#F4F4F5] p-2 rounded-lg hover:bg-[#18181B] transition-colors"
+          className="md:hidden text-[#A1A1AA] hover:text-[#F4F4F5] p-2 rounded-lg hover:bg-[#18181B] transition-colors cursor-pointer"
           aria-label="Toggle menu"
         >
           {mobileOpen ? (
@@ -116,8 +114,8 @@ export default function Navbar({ theme = 'dark' }) {
             </Link>
           ))}
           <div className="pt-3 flex flex-col gap-2">
-            <Link href="/auth" className={`${btnOutlineClass} border rounded-lg text-sm px-4 py-2.5 text-center font-medium`}>Log in</Link>
-            <Link href="/auth" className="btn-violet text-sm px-4 py-2.5 text-center block"><span>Start Free</span></Link>
+            <Link href="/auth" className={`${btnOutlineClass} border rounded-lg text-sm px-4 py-2.5 text-center font-medium cursor-pointer`}>Log in</Link>
+            <Link href="/auth" className="btn-violet text-sm px-4 py-2.5 text-center block cursor-pointer"><span>Get Started</span></Link>
           </div>
         </div>
       )}

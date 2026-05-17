@@ -40,4 +40,11 @@ const OutputSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Output || mongoose.model("Output", OutputSchema);
+// Force refresh the model in development to ensure schema changes are picked up
+if (mongoose.models.Output) {
+  delete mongoose.models.Output;
+}
+
+const Output = mongoose.model("Output", OutputSchema);
+
+export default Output;

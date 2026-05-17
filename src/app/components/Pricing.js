@@ -1,209 +1,124 @@
 'use client'
 
 import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { CheckCircle2, Zap, ShieldCheck, Mail, Sparkles } from 'lucide-react'
 
-const plans = [
-  {
-    id: 'plan-free',
-    name: 'Free',
-    badge: null,
-    price: { inr: '₹0', usd: '$0' },
-    period: 'forever',
-    description: 'Try PitchCraft and see what AI-written outreach feels like.',
-    cta: 'Start Free',
-    ctaId: 'pricing-free-cta',
-    ctaStyle: 'outline',
-    features: [
-      '10 free emails / month',
-      'Basic tone options',
-      'Email subject lines',
-      'Community support',
-    ],
-    missing: ['Unlimited generations', 'Priority support', 'Team workspace'],
+const freeFeatures = [
+  { 
+    id: 'feat-emails', 
+    label: '10 High-Quality Emails / Mo', 
+    desc: 'Powered by Llama 3.3 70B for near-human results.',
+    icon: Mail,
+    color: '#7C3AED'
   },
-  {
-    id: 'plan-pro',
-    name: 'Pro',
-    badge: 'Most Popular',
-    price: { inr: '₹199', usd: '$12' },
-    period: 'per month',
-    description: 'For freelancers who want to scale their outreach and win more clients.',
-    cta: 'Start Pro Trial',
-    ctaId: 'pricing-pro-cta',
-    ctaStyle: 'violet',
-    popular: true,
-    features: [
-      'Unlimited cold emails',
-      'All 3 tone presets',
-      'AI subject line variants',
-      'Priority generation',
-      'Email support',
-    ],
-    missing: ['Team workspace'],
+  { 
+    id: 'feat-tones', 
+    label: '3 Persuasive Tones', 
+    desc: 'Switch between Formal, Friendly, and Bold instantly.',
+    icon: Zap,
+    color: '#0EA5E9'
   },
-  {
-    id: 'plan-team',
-    name: 'Team',
-    badge: null,
-    price: { inr: '₹499', usd: '$29' },
-    period: 'per month / team',
-    description: 'For agencies and teams who need consistent, branded output across the board.',
-    cta: 'Start Team Trial',
-    ctaId: 'pricing-team-cta',
-    ctaStyle: 'outline',
-    features: [
-      'Everything in Pro',
-      'Up to 8 team members',
-      'Shared brand voice settings',
-      'Team template library',
-      'Admin dashboard & analytics',
-      'Priority support',
-    ],
-    missing: [],
+  { 
+    id: 'feat-history', 
+    label: 'Email Library & History', 
+    desc: 'Every winning email is auto-saved to your dashboard.',
+    icon: ShieldCheck,
+    color: '#10B981'
   },
 ]
 
-const CheckIcon = ({ color = '#10B981' }) => (
-  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke={color} strokeWidth={2.5} viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-  </svg>
-)
-
-const CrossIcon = () => (
-  <svg className="w-4 h-4 flex-shrink-0 text-[#3F3F46]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-  </svg>
-)
-
 export default function Pricing() {
-  const [currency, setCurrency] = useState('inr')
-
   return (
-    <section id="pricing" className="relative py-28 bg-[#09090B] section-glow">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1E1033]/15 to-transparent pointer-events-none" />
+    <section id="pricing" className="relative py-28 bg-[#09090B] overflow-hidden">
+      {/* Background radial glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#7C3AED]/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
+      <div className="relative max-w-5xl mx-auto px-6">
+        
         {/* Header */}
-        <div className="text-center mb-14 space-y-4">
-          <span className="badge badge-violet mx-auto">Pricing</span>
+        <div className="text-center mb-16 space-y-4">
+          <span className="badge badge-violet mx-auto">100% Free MVP</span>
           <h2 className="text-4xl font-bold text-[#F4F4F5] mt-4">
-            Simple, <span className="gradient-text">Transparent Pricing</span>
+            Powerful Outreach, <span className="gradient-text">Zero Cost</span>
           </h2>
-          <p className="text-[#A1A1AA] text-lg max-w-xl mx-auto">
-            Start free. Upgrade when you're ready. No hidden fees, no lock-in.
+          <p className="text-[#A1A1AA] text-lg max-w-2xl mx-auto">
+            We're keeping PitchCraft free for all early users. No credit card, no complex subscriptions — just start winning more clients today.
           </p>
+        </div>
 
-          {/* Currency toggle */}
-          <div className="flex items-center justify-center gap-2 pt-2">
-            <button
-              id="pricing-toggle-inr"
-              onClick={() => setCurrency('inr')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                currency === 'inr'
-                  ? 'bg-[#7C3AED] text-white'
-                  : 'text-[#A1A1AA] hover:text-[#F4F4F5]'
-              }`}
-            >
-              ₹ INR
-            </button>
-            <button
-              id="pricing-toggle-usd"
-              onClick={() => setCurrency('usd')}
-              className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                currency === 'usd'
-                  ? 'bg-[#7C3AED] text-white'
-                  : 'text-[#A1A1AA] hover:text-[#F4F4F5]'
-              }`}
-            >
-              $ USD
-            </button>
+        {/* Unified Free Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="relative bg-[#18181B] border border-[#27272A] rounded-[32px] p-8 md:p-12 overflow-hidden shadow-2xl"
+        >
+          {/* Decorative Sparkle */}
+          <div className="absolute top-0 right-0 p-8 text-[#7C3AED]/20">
+            <Sparkles size={120} />
           </div>
-        </div>
 
-        {/* Cards */}
-        <div className="grid md:grid-cols-3 gap-6 items-start">
-          {plans.map(plan => (
-            <div
-              key={plan.id}
-              id={plan.id}
-              className={`relative rounded-2xl p-7 flex flex-col ${
-                plan.popular
-                  ? 'pricing-popular'
-                  : 'bg-[#18181B] border border-[#3F3F46]'
-              }`}
-            >
-              {/* Popular badge */}
-              {plan.badge && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="badge badge-violet whitespace-nowrap text-[11px] shadow-[0_4px_16px_rgba(124,58,237,0.4)]">
-                    ✦ {plan.badge}
-                  </span>
-                </div>
-              )}
-
-              {/* Plan name */}
-              <div className="mb-1">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#A1A1AA]">{plan.name}</p>
+          <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+            
+            {/* Left: Value Prop */}
+            <div className="space-y-8">
+              <div>
+                <h3 className="text-2xl font-bold text-[#F4F4F5] mb-2">The Free Forever Plan</h3>
+                <p className="text-[#71717A] text-sm">Everything you need to scale your outreach as an individual.</p>
               </div>
 
-              {/* Price */}
-              <div className="flex items-end gap-1.5 mb-1">
-                <span className="text-5xl font-extrabold text-[#F4F4F5]">
-                  {plan.price[currency]}
-                </span>
-                {plan.price[currency] !== '₹0' && plan.price[currency] !== '$0' && (
-                  <span className="text-[#A1A1AA] text-sm mb-1.5 font-medium">{plan.period}</span>
-                )}
+              <div className="space-y-6">
+                {freeFeatures.map(f => (
+                  <div key={f.id} className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${f.color}15`, color: f.color }}>
+                      <f.icon size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-[#F4F4F5]">{f.label}</p>
+                      <p className="text-xs text-[#A1A1AA] leading-relaxed mt-0.5">{f.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-
-              <p className="text-[#A1A1AA] text-sm leading-relaxed mb-6">{plan.description}</p>
-
-               {/* CTA */}
-               {plan.ctaStyle === 'violet' ? (
-                 <a
-                   href="/auth"
-                   id={plan.ctaId}
-                   className="btn-violet text-center text-sm py-3 mb-6 block"
-                 >
-                   <span>{plan.cta}</span>
-                 </a>
-               ) : (
-                 <a
-                   href="/auth"
-                   id={plan.ctaId}
-                   className="btn-outline text-center text-sm py-3 mb-6 block"
-                 >
-                   {plan.cta}
-                 </a>
-               )}
-
-              {/* Divider */}
-              <div className="border-t border-[#3F3F46]/60 mb-5" />
-
-              {/* Features list */}
-              <ul className="space-y-3 flex-1">
-                {plan.features.map(f => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#F4F4F5]">
-                    <CheckIcon color={plan.popular ? '#A78BFA' : '#10B981'} />
-                    {f}
-                  </li>
-                ))}
-                {plan.missing.map(f => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-[#3F3F46] line-through">
-                    <CrossIcon />
-                    {f}
-                  </li>
-                ))}
-              </ul>
             </div>
-          ))}
-        </div>
 
-        {/* Bottom note */}
-        <p className="text-center text-[#A1A1AA] text-sm mt-10">
-          All plans include a 7-day free trial. No credit card required to start.
-          <span className="text-[#7C3AED] font-semibold"> Cancel anytime.</span>
+            {/* Right: CTA Section */}
+            <div className="bg-[#09090B] border border-[#27272A] rounded-2xl p-8 flex flex-col items-center text-center space-y-6">
+              <div className="space-y-1">
+                <span className="text-5xl font-extrabold text-[#F4F4F5]">₹0</span>
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#52525B]">Free Forever</p>
+              </div>
+              
+              <div className="w-full space-y-3">
+                <a 
+                  href="/auth" 
+                  className="btn-violet w-full py-4 text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#7C3AED]/20 cursor-pointer"
+                >
+                  <Zap size={16} fill="currentColor" />
+                  Get Started Free
+                </a>
+                <p className="text-[10px] text-[#52525B] font-medium">Join 2,400+ users winning with PitchCraft</p>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-[11px] text-[#A1A1AA]">
+                  <CheckCircle2 size={12} className="text-[#10B981]" />
+                  No credit card required
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-[#A1A1AA]">
+                  <CheckCircle2 size={12} className="text-[#10B981]" />
+                  Unlimited tone switching
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </motion.div>
+
+        {/* Bottom Note */}
+        <p className="text-center text-[#52525B] text-xs mt-12 font-medium">
+          Interested in white-labeling or team access? <a href="mailto:hello@pitchcraft.ai" className="text-[#7C3AED] hover:underline cursor-pointer">Contact us for custom solutions.</a>
         </p>
       </div>
     </section>

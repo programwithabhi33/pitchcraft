@@ -3,20 +3,16 @@
 const footerLinks = {
   Product: [
     { id: 'footer-features', label: 'Features', href: '/#features' },
-    { id: 'footer-pricing', label: 'Pricing', href: '/#pricing' },
     { id: 'footer-how-it-works', label: 'How It Works', href: '/#how-it-works' },
-    { id: 'footer-changelog', label: 'Changelog', href: '/' },
+    { id: 'footer-faq', label: 'FAQ', href: '/#faq' },
   ],
   Company: [
     { id: 'footer-about', label: 'About', href: '/' },
-    { id: 'footer-blog', label: 'Blog', href: '/' },
-    { id: 'footer-careers', label: 'Careers', href: '/' },
     { id: 'footer-contact', label: 'Contact', href: '/' },
   ],
   Legal: [
     { id: 'footer-privacy', label: 'Privacy Policy', href: '/privacy' },
     { id: 'footer-terms', label: 'Terms of Service', href: '/terms' },
-    { id: 'footer-refund', label: 'Refund Policy', href: '/' },
   ],
 }
 
@@ -63,15 +59,14 @@ export default function Footer() {
              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-[#7C3AED]/20 rounded-full blur-3xl" />
 
              <div className="relative max-w-3xl mx-auto px-4 text-center space-y-6">
-               <span className="badge badge-violet mx-auto">Get Started Today</span>
+               <span className="badge badge-violet mx-auto">Get Started</span>
                <h2 className="text-3xl sm:text-4xl font-extrabold text-[#F4F4F5] leading-tight mt-3">
                  Stop Losing Clients to{' '}
                  <span className="gradient-text">Weak Outreach</span>
-
                </h2>
                <p className="text-[#A1A1AA] text-base max-w-lg mx-auto">
                  Generate high-conversion cold emails in 30 seconds.
-                 Start free — no credit card required.
+                 Start writing and winning today.
                </p>
                <a
                  href="/auth"
@@ -82,7 +77,7 @@ export default function Footer() {
                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                    </svg>
-                   Generate My First Email Free
+                   Generate My First Email
                  </span>
                </a>
              </div>

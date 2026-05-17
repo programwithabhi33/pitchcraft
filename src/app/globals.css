@@ -134,6 +134,9 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .btn-violet::before {
   content: '';
@@ -146,7 +149,8 @@ body {
 .btn-violet:hover::before { opacity: 1; }
 .btn-violet:hover { box-shadow: 0 8px 32px rgba(124, 58, 237, 0.55); transform: translateY(-1px); }
 .btn-violet:active { transform: translateY(0); }
-.btn-violet span { position: relative; z-index: 1; }
+/* Fix: Ensure text and icons remain visible on hover by forcing them above the ::before layer */
+.btn-violet > * { position: relative; z-index: 1; }
 
 /* ─── Outline button ─────────────────────────────────── */
 .btn-outline {
