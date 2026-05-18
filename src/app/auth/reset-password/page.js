@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
@@ -8,13 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
-  Lock,
-  ArrowRight,
   AlertCircle,
   Loader2,
   CheckCircle2,
-  ArrowLeft
 } from 'lucide-react'
+import { PasswordInput } from '@/utils/utils'
 
 const resetSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -42,7 +40,9 @@ function ResetPasswordContent() {
         <AlertCircle size={48} className="mx-auto text-rose-500" />
         <h2 className="text-xl font-bold text-[#F4F4F5]">Invalid Link</h2>
         <p className="text-sm text-[#71717A]">This password reset link is missing a token or is invalid.</p>
-        <Link href="/auth" className="btn-violet px-6 py-2 text-sm inline-block w-full text-center mt-4">Back to Login</Link>
+        <Link href="/auth" className="btn-violet px-6 py-2 text-sm inline-block w-full text-center mt-4 cursor-pointer">
+          <span>Back to Login</span>
+        </Link>
       </div>
     )
   }
@@ -102,9 +102,9 @@ function ResetPasswordContent() {
           </div>
           <Link
             href="/auth"
-            className="w-full btn-violet py-3.5 text-sm font-bold flex items-center justify-center gap-2"
+            className="w-full btn-violet py-3.5 text-sm font-bold flex items-center justify-center gap-2 cursor-pointer"
           >
-            Return to Login
+            <span>Return to Login</span>
           </Link>
         </motion.div>
       ) : (
@@ -121,40 +121,30 @@ function ResetPasswordContent() {
               </div>
             )}
 
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-[#A1A1AA] ml-1">New Password</label>
-              <div className="relative flex items-center">
-                <Lock className="absolute left-3 w-4 h-4 text-[#52525B]" />
-                <input 
-                  type="password"
-                  {...register('password')}
-                  placeholder="At least 8 characters"
-                  className="w-full bg-[#09090B] border border-[#27272A] rounded-xl pl-10 pr-4 py-3 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED] transition-all"
-                />
-              </div>
-              {errors.password && <p className="text-[10px] text-rose-500 ml-1 mt-1">{errors.password.message}</p>}
-            </div>
+            <PasswordInput 
+              id="reset-password"
+              label="New Password"
+              error={errors.password?.message}
+              registration={register('password')}
+            />
 
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-[#A1A1AA] ml-1">Confirm New Password</label>
-              <div className="relative flex items-center">
-                <Lock className="absolute left-3 w-4 h-4 text-[#52525B]" />
-                <input 
-                  type="password"
-                  {...register('confirmPassword')}
-                  placeholder="Repeat new password"
-                  className="w-full bg-[#09090B] border border-[#27272A] rounded-xl pl-10 pr-4 py-3 text-sm text-[#F4F4F5] focus:outline-none focus:border-[#7C3AED] transition-all"
-                />
-              </div>
-              {errors.confirmPassword && <p className="text-[10px] text-rose-500 ml-1 mt-1">{errors.confirmPassword.message}</p>}
-            </div>
+            <PasswordInput 
+              id="reset-confirm"
+              label="Confirm New Password"
+              error={errors.confirmPassword?.message}
+              registration={register('confirmPassword')}
+            />
 
             <button 
               type="submit" 
               disabled={isSubmitting}
-              className="w-full btn-violet py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60 mt-2"
+              className="w-full btn-violet py-3.5 text-sm font-bold flex items-center justify-center gap-2 disabled:opacity-60 mt-2 cursor-pointer"
             >
-              {isSubmitting ? <Loader2 className="animate-spin w-4 h-4" /> : 'Update Password'}
+              {isSubmitting ? (
+                <Loader2 className="animate-spin w-4 h-4" />
+              ) : (
+                <span>Update Password</span>
+              )}
             </button>
           </form>
         </div>
