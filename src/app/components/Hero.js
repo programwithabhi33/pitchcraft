@@ -145,18 +145,18 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-8 gap-y-3 pt-4">
+          {/* 50/50 Grid for Badges */}
+          <div className="grid grid-cols-2 gap-4 pt-4 max-w-lg mx-auto lg:mx-0">
             {[
-              { icon: "🌎", label: "Native English" },
-              { icon: "💾", label: "Auto-save history" },
               { icon: "⚡", label: "Instant results" },
+              { icon: "🎯", label: "Subject Variants" },
             ].map((item) => (
               <div
                 key={item.label}
-                className="flex items-center gap-2 text-sm font-medium text-[#71717A]"
+                className="flex items-center gap-3 bg-[#18181B] border border-[#27272A] rounded-2xl px-4 py-4 hover:border-[#3F3F46] transition-colors"
               >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="text-xl">{item.icon}</span>
+                <span className="text-sm font-bold text-[#F4F4F5]">{item.label}</span>
               </div>
             ))}
           </div>

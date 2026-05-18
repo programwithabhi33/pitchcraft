@@ -29,7 +29,7 @@ export default function Navbar({ theme = 'dark' }) {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-        ? `${bgScrolled} backdrop-blur-md border-b border-[#3F3F46]/60 shadow-sm`
+        ? `${bgScrolled} backdrop-blur-md`
         : `bg-transparent`
         }`}
     >

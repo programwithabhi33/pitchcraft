@@ -29,7 +29,7 @@ export default function HowItWorks() {
       number: "02",
       title: "AI Generates Your Kit",
       description:
-        "PitchCraft generates a high-conversion cold email in 3 distinct tones — all in under 30 seconds.",
+        "PitchCraft generates a high-conversion cold email in 3 distinct tones — all in under seconds.",
       icon: (
         <svg
           className="w-6 h-6"
