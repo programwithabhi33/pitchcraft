@@ -2,9 +2,11 @@ import DashboardHeader from '@/app/components/dashboard/DashboardHeader'
 import QuickActions from '@/app/components/dashboard/QuickActions'
 import RecentOutputs from '@/app/components/dashboard/RecentOutputs'
 import HorizontalTips from '@/app/components/dashboard/HorizontalTips'
+import VerifiedBanner from '@/app/components/dashboard/VerifiedBanner'
 import { auth } from '@/auth'
 import dbConnect from '@/lib/db'
 import User from '@/models/User'
+import { Suspense } from 'react'
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -15,6 +17,11 @@ export default async function DashboardPage() {
     <div className="flex flex-col min-h-full">
       {/* Top header bar */}
       <DashboardHeader />
+
+      {/* Success banner after verification */}
+      <Suspense fallback={null}>
+        <VerifiedBanner />
+      </Suspense>
 
       {/* ── Main content area ─────────────────── */}
       <main className="flex-1 p-6 space-y-10 max-w-7xl mx-auto w-full">

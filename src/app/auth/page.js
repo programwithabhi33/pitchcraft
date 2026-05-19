@@ -72,7 +72,7 @@ const forgotPasswordSchema = z.object({
 const benefits = [
   {
     icon: <Zap className="w-4 h-4" />,
-    text: "Cold email generated in 30 seconds",
+    text: "Cold email generated in seconds",
   },
   {
     icon: <Mail className="w-4 h-4" />,
@@ -185,7 +185,7 @@ function SignUpForm({ onVerifyRequired }) {
         setError(result.message);
         return;
       }
-      onVerifyRequired(data.email);
+      onVerifyRequired(data.email, data.password);
     } catch (err) {
       setError("Something went wrong");
     }
@@ -208,7 +208,7 @@ function SignUpForm({ onVerifyRequired }) {
       />
       <FloatingInput
         id="signup-email"
-        label="Work email"
+        label="Email address"
         type="email"
         icon={Mail}
         error={errors.email?.message}
@@ -245,11 +245,26 @@ function SignUpForm({ onVerifyRequired }) {
   );
 }
 
-function OTPVerifyForm({ email }) {
+function OTPVerifyForm({ email, password }) {
+  const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
+  const [resendMessage, setResendMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [timer, setTimer] = useState(0);
   const inputRefs = useRef([]);
+
+  // Timer logic
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
 
   // Auto-focus first input on mount
   useEffect(() => {
@@ -265,7 +280,6 @@ function OTPVerifyForm({ email }) {
     newOtp[i] = digit;
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (digit && i < 5) {
       inputRefs.current[i + 1].focus();
     }
@@ -274,13 +288,11 @@ function OTPVerifyForm({ email }) {
   const handleKeyDown = (e, i) => {
     if (e.key === "Backspace") {
       if (!otp[i] && i > 0) {
-        // If current is empty, go to previous and clear it
         const newOtp = [...otp];
         newOtp[i - 1] = "";
         setOtp(newOtp);
         inputRefs.current[i - 1].focus();
       } else if (otp[i]) {
-        // If current has value, just clear it
         const newOtp = [...otp];
         newOtp[i] = "";
         setOtp(newOtp);
@@ -298,9 +310,37 @@ function OTPVerifyForm({ email }) {
     }
   };
 
+  const handleResend = async () => {
+    if (timer > 0 || isResending) return;
+
+    setIsResending(true);
+    setResendMessage("");
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, resendOnly: true }), // We'll handle this in signup API
+      });
+
+      if (res.ok) {
+        setResendMessage("Code has been resent successfully");
+        setTimer(120); // 2 minute timer
+      } else {
+        setError("Failed to resend code");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   const handleVerify = async (e) => {
     e.preventDefault();
     setError("");
+    setResendMessage("");
     setIsSubmitting(true);
     try {
       const res = await fetch("/api/auth/verify", {
@@ -308,18 +348,38 @@ function OTPVerifyForm({ email }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otp.join("") }),
       });
+
       if (!res.ok) {
         const r = await res.json();
         setError(r.message);
         setIsSubmitting(false);
         return;
       }
-      // Success - refresh or redirect
-      window.location.reload();
+
+      // Verification successful! Now direct log in
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError("Verified, but login failed. Please log in manually.");
+        setIsSubmitting(false);
+      } else {
+        router.push("/dashboard?verified=true");
+        router.refresh();
+      }
     } catch (err) {
       setError("Something went wrong");
       setIsSubmitting(false);
     }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   return (
@@ -347,6 +407,13 @@ function OTPVerifyForm({ email }) {
           />
         ))}
       </div>
+
+      {resendMessage && (
+        <div className="text-center text-xs text-emerald-500 font-medium bg-emerald-500/10 py-2 rounded-lg border border-emerald-500/20 flex items-center justify-center gap-1.5">
+          <CheckCircle2 size={12} /> {resendMessage}
+        </div>
+      )}
+
       {error && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -356,6 +423,7 @@ function OTPVerifyForm({ email }) {
           {error}
         </motion.div>
       )}
+
       <button
         id="verify-submit-btn"
         type="submit"
@@ -365,16 +433,28 @@ function OTPVerifyForm({ email }) {
         {isSubmitting ? (
           <Loader2 className="animate-spin w-4 h-4" />
         ) : (
-          "Complete Verification"
+          <span>Complete Verification</span>
         )}
       </button>
+
       <div className="text-center pt-2">
-        <button
-          type="button"
-          className="text-xs text-[#52525B] hover:text-[#A1A1AA] transition-colors flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
-        >
-          <RefreshCw size={12} /> <span>Didn't receive code? Resend</span>
-        </button>
+        <p className="text-xs text-[#52525B]">
+          Didn't receive code?{" "}
+          {timer > 0 ? (
+            <span className="text-[#71717A] font-medium ml-1">
+              Resend in {formatTime(timer)}
+            </span>
+          ) : (
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={isResending}
+              className="text-[#7C3AED] hover:text-[#A78BFA] transition-colors font-bold underline underline-offset-4 cursor-pointer disabled:opacity-50"
+            >
+              {isResending ? "Resending..." : "Resend"}
+            </button>
+          )}
+        </p>
       </div>
     </form>
   );
@@ -486,9 +566,11 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState("login");
   const [step, setStep] = useState("auth"); // login | signup | verify | forgot
   const [emailForVerify, setEmailForVerify] = useState("");
+  const [passwordForVerify, setPasswordForVerify] = useState("");
 
-  const handleVerifyRequired = (email) => {
+  const handleVerifyRequired = (email, password) => {
     setEmailForVerify(email);
+    setPasswordForVerify(password);
     setStep("verify");
   };
 
@@ -501,19 +583,13 @@ export default function AuthPage() {
       <div className="hidden lg:flex lg:w-[42%] relative overflow-hidden flex-col">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1E1033] via-[#2D1060] to-[#09090B]" />
         <div className="absolute inset-0 mesh-grid opacity-20" />
-        <div className="relative flex flex-col flex-1 p-10 justify-center">
-          <Link
-            href="/"
-            className="absolute top-10 left-10 flex items-center gap-2 text-[#A1A1AA] hover:text-[#F4F4F5] transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={16} /> Back to Home
-          </Link>
-          <div className="space-y-8">
+        <div className="relative flex flex-col flex-1 p-10 justify-center text-center items-center">
+          <div className="space-y-8 max-w-sm">
             <h2 className="text-3xl font-extrabold text-[#F4F4F5] leading-snug">
               Win clients with <span className="gradient-text">AI-written</span>{" "}
               emails
             </h2>
-            <ul className="space-y-4">
+            <ul className="space-y-4 text-left">
               {benefits.map((b, i) => (
                 <li key={i} className="flex items-center gap-3.5">
                   <div className="w-7 h-7 rounded-lg bg-[#7C3AED]/20 border border-[#7C3AED]/30 flex items-center justify-center text-[#A78BFA] flex-shrink-0 mt-0.5">
@@ -529,7 +605,14 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0">
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0 relative">
+        <Link
+          href="/"
+          className="absolute top-10 left-10 flex items-center gap-2 text-[#A1A1AA] hover:text-[#F4F4F5] transition-colors cursor-pointer"
+        >
+          <ArrowLeft size={16} /> Back to Home
+        </Link>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -622,7 +705,10 @@ export default function AuthPage() {
                   <h2 className="text-2xl font-bold text-[#F4F4F5] text-center mb-2">
                     Verify your email
                   </h2>
-                  <OTPVerifyForm email={emailForVerify} />
+                  <OTPVerifyForm
+                    email={emailForVerify}
+                    password={passwordForVerify}
+                  />
                 </motion.div>
               )}
 

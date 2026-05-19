@@ -6,9 +6,9 @@ import { sendEmail, generateOTP, getOTPTemplate } from "@/lib/mail";
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, resendOnly } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!email) {
       return NextResponse.json(
         { message: "Missing required fields" },
         { status: 400 }
@@ -22,7 +22,7 @@ export async function POST(req) {
     const existingUser = await User.findOne({ email: lowerEmail });
 
     if (existingUser) {
-      if (existingUser.isVerified) {
+      if (existingUser.isVerified && !resendOnly) {
         return NextResponse.json(
           { message: "User already exists and is verified" },
           { status: 400 }
@@ -34,7 +34,7 @@ export async function POST(req) {
       existingUser.verificationOTPExpires = new Date(Date.now() + 10 * 60 * 1000); 
       
       await existingUser.save();
-      console.log(`Updated existing user ${lowerEmail} with OTP: ${otp}`);
+      console.log(`Updated user ${lowerEmail} with new OTP: ${otp}`);
 
       await sendEmail({
         to: lowerEmail,
@@ -46,6 +46,15 @@ export async function POST(req) {
         { message: "Verification code sent to email", email: lowerEmail },
         { status: 200 }
       );
+    }
+
+    // New signup logic
+    if (resendOnly) {
+        return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    if (!name || !password) {
+        return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
