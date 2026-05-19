@@ -14,6 +14,7 @@ import {
   Target,
   Lightbulb,
 } from "lucide-react";
+import { Copy } from "lucide-react";
 
 const demoLines = [
   { label: "Subject", value: "Re: Your React project — let's talk" },
@@ -156,7 +157,9 @@ export default function Hero() {
                 className="flex items-center gap-3 bg-[#18181B] border border-[#27272A] rounded-2xl px-4 py-4 hover:border-[#3F3F46] transition-colors"
               >
                 <span className="text-xl">{item.icon}</span>
-                <span className="text-sm font-bold text-[#F4F4F5]">{item.label}</span>
+                <span className="text-sm font-bold text-[#F4F4F5]">
+                  {item.label}
+                </span>
               </div>
             ))}
           </div>
@@ -217,7 +220,7 @@ export default function Hero() {
                       <Mail size={12} className="text-[#A1A1AA]" />
                     </div>
                     <div className="w-7 h-7 rounded-lg bg-[#27272A] flex items-center justify-center">
-                      <BookmarkPlus size={12} className="text-[#A1A1AA]" />
+                      <Copy size={12} className="text-[#A1A1AA]" />
                     </div>
                     <div className="w-7 h-7 rounded-lg bg-[#27272A] flex items-center justify-center">
                       <RefreshCw size={12} className="text-[#A1A1AA]" />

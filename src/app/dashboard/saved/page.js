@@ -9,13 +9,14 @@ import {
   Trash2,
   Copy,
   Mail,
-  ChevronDown,
   CheckCheck,
   ChevronLeft,
   ChevronRight,
   Loader2,
 } from "lucide-react";
 import useSWR from "swr";
+import DashboardHeader from "@/app/components/dashboard/DashboardHeader";
+import DeleteConfirmModal from "@/app/components/dashboard/DeleteConfirmModal";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -43,7 +44,14 @@ export default function SavedOutputsPage() {
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Modal state
+  const [deleteModal, setDeleteModal] = useState({ 
+    isOpen: false, 
+    id: null, 
+    isDeleting: false,
+    bulk: false 
+  })
 
   // Derived list
   const list = outputs || [];
@@ -72,39 +80,37 @@ export default function SavedOutputsPage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this email?")) return;
-
-    try {
-      const res = await fetch(`/api/outputs/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        mutate();
-        setSelectedIds((prev) => prev.filter((x) => x !== id));
-      }
-    } catch (err) {
-      console.error("Delete error:", err);
-    }
+  const openSingleDelete = (id) => {
+    setDeleteModal({ isOpen: true, id, isDeleting: false, bulk: false });
   };
 
-  const deleteSelected = async () => {
-    if (
-      !confirm(`Are you sure you want to delete ${selectedIds.length} items?`)
-    )
-      return;
+  const openBulkDelete = () => {
+    setDeleteModal({ isOpen: true, id: null, isDeleting: false, bulk: true });
+  };
 
-    setIsDeleting(true);
+  const confirmDelete = async () => {
+    setDeleteModal(prev => ({ ...prev, isDeleting: true }));
     try {
-      await Promise.all(
-        selectedIds.map((id) =>
-          fetch(`/api/outputs/${id}`, { method: "DELETE" }),
-        ),
-      );
-      mutate();
-      setSelectedIds([]);
+      if (deleteModal.bulk) {
+        // Bulk delete logic
+        await Promise.all(
+            selectedIds.map((id) =>
+              fetch(`/api/outputs/${id}`, { method: "DELETE" }),
+            ),
+          );
+          setSelectedIds([]);
+      } else {
+        // Single delete logic
+        const res = await fetch(`/api/outputs/${deleteModal.id}`, { method: "DELETE" });
+        if (!res.ok) throw new Error('Failed to delete');
+      }
+      
+      await mutate();
+      setDeleteModal({ isOpen: false, id: null, isDeleting: false, bulk: false });
     } catch (err) {
-      console.error("Bulk delete error:", err);
-    } finally {
-      setIsDeleting(false);
+      console.error("Delete error:", err);
+      alert("Failed to delete items");
+      setDeleteModal(prev => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -124,37 +130,15 @@ export default function SavedOutputsPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      {/* ── Page Header ── */}
-      <div className="bg-[#09090B] border-b border-[#27272A] px-6 py-6 sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto space-y-5">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-[#F4F4F5]">
-                Email Library
-              </h1>
-              <p className="text-sm text-[#71717A] mt-1">
-                Manage and access your previously generated cold emails.
-              </p>
-            </div>
+      {/* Integrated Dashboard Header for Mobile Menu Support */}
+      <DashboardHeader 
+        title="Email Library" 
+        subtitle="Manage and access your previously generated cold emails" 
+      />
 
-            <div className="flex items-center bg-[#18181B] p-1 rounded-xl border border-[#27272A] self-start md:self-auto">
-              <button
-                onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded-lg transition-colors ${viewMode === "list" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
-              >
-                <List size={16} />
-              </button>
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded-lg transition-colors ${viewMode === "grid" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
-              >
-                <LayoutGrid size={16} />
-              </button>
-            </div>
-          </div>
-
-          {/* Toolbar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#18181B] p-3 rounded-2xl border border-[#27272A]">
+      {/* Toolbar - Sticky below the header */}
+      <div className="bg-[#09090B] border-b border-[#27272A] px-6 py-6 sticky top-[64px] z-20">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#18181B] p-3 rounded-2xl border border-[#27272A]">
             <div className="flex w-full sm:w-auto items-center gap-3 flex-1">
               <div className="relative w-full sm:max-w-xs">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
@@ -165,6 +149,21 @@ export default function SavedOutputsPage() {
                   placeholder="Search emails…"
                   className="w-full bg-[#09090B] border border-[#27272A] rounded-xl pl-9 pr-4 py-2 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] transition-colors"
                 />
+              </div>
+
+              <div className="flex items-center bg-[#09090B] p-1 rounded-xl border border-[#27272A] ml-auto">
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-1.5 rounded-lg transition-colors ${viewMode === "list" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
+                >
+                  <List size={16} />
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-1.5 rounded-lg transition-colors ${viewMode === "grid" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
+                >
+                  <LayoutGrid size={16} />
+                </button>
               </div>
             </div>
 
@@ -180,22 +179,16 @@ export default function SavedOutputsPage() {
                     {selectedIds.length} selected
                   </div>
                   <button
-                    onClick={deleteSelected}
-                    disabled={isDeleting}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 transition-colors disabled:opacity-50"
+                    onClick={openBulkDelete}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 transition-colors cursor-pointer"
                   >
-                    {isDeleting ? (
-                      <Loader2 size={14} className="animate-spin" />
-                    ) : (
-                      <Trash2 size={14} />
-                    )}
+                    <Trash2 size={14} />
                     Delete
                   </button>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
-        </div>
       </div>
 
       {/* ── Main Content Area ── */}
@@ -308,7 +301,7 @@ export default function SavedOutputsPage() {
                                       onClick={() =>
                                         handleCopy(out._id, out.content)
                                       }
-                                      className={`p-1.5 rounded-lg transition-colors ${isCopied ? "text-[#10B981]" : "text-[#71717A] hover:bg-[#3F3F46] hover:text-[#F4F4F5]"}`}
+                                      className={`p-1.5 rounded-lg transition-colors ${isCopied ? "text-[#10B981]" : "text-[#71717A] hover:bg-[#3F3F46] hover:text-[#F4F4F5]"} cursor-pointer`}
                                     >
                                       {isCopied ? (
                                         <CheckCheck size={14} />
@@ -317,8 +310,8 @@ export default function SavedOutputsPage() {
                                       )}
                                     </button>
                                     <button
-                                      onClick={() => handleDelete(out._id)}
-                                      className="p-1.5 rounded-lg text-[#71717A] hover:bg-[#F43F5E]/10 hover:text-[#F43F5E] transition-colors"
+                                      onClick={() => openSingleDelete(out._id)}
+                                      className="p-1.5 rounded-lg text-[#71717A] hover:bg-[#F43F5E]/10 hover:text-[#F43F5E] transition-colors cursor-pointer"
                                     >
                                       <Trash2 size={14} />
                                     </button>
@@ -403,7 +396,7 @@ export default function SavedOutputsPage() {
                                 )}
                               </button>
                               <button
-                                onClick={() => handleDelete(out._id)}
+                                onClick={() => openSingleDelete(out._id)}
                                 className="p-1.5 rounded-lg bg-[#27272A] text-[#71717A] hover:text-[#F43F5E] hover:bg-[#F43F5E]/10 transition-colors cursor-pointer"
                               >
                                 <Trash2 size={12} />
@@ -445,7 +438,7 @@ export default function SavedOutputsPage() {
                         setCurrentPage((prev) => Math.max(prev - 1, 1))
                       }
                       disabled={currentPage === 1}
-                      className="p-2 rounded-lg border border-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#27272A] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-2 rounded-lg border border-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#27272A] transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                     >
                       <ChevronLeft size={16} />
                     </button>
@@ -459,7 +452,7 @@ export default function SavedOutputsPage() {
                             currentPage === i + 1
                               ? "bg-[#7C3AED] text-white"
                               : "text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#27272A]"
-                          }`}
+                          } cursor-pointer`}
                         >
                           {i + 1}
                         </button>
@@ -471,7 +464,7 @@ export default function SavedOutputsPage() {
                         setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                       }
                       disabled={currentPage === totalPages}
-                      className="p-2 rounded-lg border border-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#27272A] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="p-2 rounded-lg border border-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#27272A] transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                     >
                       <ChevronRight size={16} />
                     </button>
@@ -482,6 +475,23 @@ export default function SavedOutputsPage() {
           )}
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <AnimatePresence>
+        {deleteModal.isOpen && (
+          <DeleteConfirmModal 
+            isOpen={deleteModal.isOpen}
+            isDeleting={deleteModal.isDeleting}
+            onClose={() => setDeleteModal({ isOpen: false, id: null, isDeleting: false, bulk: false })}
+            onConfirm={confirmDelete}
+            title={deleteModal.bulk ? `Delete ${selectedIds.length} emails?` : "Delete this email?"}
+            message={deleteModal.bulk 
+              ? "Are you sure you want to remove these items? This action cannot be undone." 
+              : "This email will be permanently removed from your library."
+            }
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

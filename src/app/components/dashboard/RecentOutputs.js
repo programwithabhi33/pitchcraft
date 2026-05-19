@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Trash2, Mail, CheckCheck } from 'lucide-react'
 import useSWR from 'swr'
+import DeleteConfirmModal from './DeleteConfirmModal'
 
 const fetcher = (url) => fetch(url).then((res) => res.json())
 
@@ -16,7 +17,7 @@ const typeConfig = {
   },
 }
 
-function OutputCard({ output, index, mutate }) {
+function OutputCard({ output, index, mutate, onDeleteClick }) {
   const [copied, setCopied] = useState(false)
   const config = typeConfig[output.type] || typeConfig.cold_email
   const Icon = config.icon
@@ -25,19 +26,6 @@ function OutputCard({ output, index, mutate }) {
     navigator.clipboard?.writeText(output.content)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }
-
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this?')) return
-    
-    try {
-      const res = await fetch(`/api/outputs/${output._id}`, { method: 'DELETE' })
-      if (res.ok) {
-        mutate() // Refresh the list
-      }
-    } catch (error) {
-      console.error('Delete error:', error)
-    }
   }
 
   const formattedDate = new Date(output.generatedAt).toLocaleDateString('en-US', {
@@ -91,7 +79,7 @@ function OutputCard({ output, index, mutate }) {
           <button
             onClick={handleCopy}
             title="Copy content"
-            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
+            className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
               copied
                 ? 'bg-[#10B981]/20 text-[#10B981]'
                 : 'bg-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#3F3F46]'
@@ -100,9 +88,9 @@ function OutputCard({ output, index, mutate }) {
             {copied ? <CheckCheck size={12} /> : <Copy size={12} />}
           </button>
           <button
-            onClick={handleDelete}
+            onClick={() => onDeleteClick(output._id)}
             title="Delete"
-            className="w-7 h-7 rounded-lg bg-[#27272A] text-[#71717A] hover:text-[#F43F5E] hover:bg-[#F43F5E]/10 flex items-center justify-center transition-all"
+            className="w-7 h-7 rounded-lg bg-[#27272A] text-[#71717A] hover:text-[#F43F5E] hover:bg-[#F43F5E]/10 flex items-center justify-center transition-all cursor-pointer"
           >
             <Trash2 size={12} />
           </button>
@@ -135,7 +123,7 @@ function EmptyState() {
 
       <a
         href="/dashboard/generator"
-        className="btn-violet text-sm px-6 py-2.5 flex items-center gap-2"
+        className="btn-violet text-sm px-6 py-2.5 flex items-center gap-2 cursor-pointer"
       >
         <Mail size={14} />
         Generate Your First Email
@@ -146,6 +134,28 @@ function EmptyState() {
 
 export default function RecentOutputs() {
   const { data: outputs, isLoading, mutate } = useSWR('/api/outputs', fetcher)
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, isDeleting: false })
+
+  const handleDeleteClick = (id) => {
+    setDeleteModal({ isOpen: true, id, isDeleting: false })
+  }
+
+  const confirmDelete = async () => {
+    setDeleteModal(prev => ({ ...prev, isDeleting: true }))
+    try {
+      const res = await fetch(`/api/outputs/${deleteModal.id}`, { method: 'DELETE' })
+      if (res.ok) {
+        await mutate()
+        setDeleteModal({ isOpen: false, id: null, isDeleting: false })
+      } else {
+        alert('Failed to delete email')
+        setDeleteModal(prev => ({ ...prev, isDeleting: false }))
+      }
+    } catch (error) {
+      console.error('Delete error:', error)
+      setDeleteModal(prev => ({ ...prev, isDeleting: false }))
+    }
+  }
 
   if (isLoading) {
     return (
@@ -157,7 +167,7 @@ export default function RecentOutputs() {
     )
   }
 
-  const list = (outputs || []).slice(0, 4) // Always limit to 4 on dashboard
+  const list = (outputs || []).slice(0, 4)
 
   return (
     <section className="space-y-4">
@@ -168,7 +178,7 @@ export default function RecentOutputs() {
         {(outputs?.length > 0) && (
           <a
             href="/dashboard/saved"
-            className="text-xs text-[#7C3AED] hover:text-[#A78BFA] font-medium transition-colors"
+            className="text-xs text-[#7C3AED] hover:text-[#A78BFA] font-medium transition-colors cursor-pointer"
           >
             View Library →
           </a>
@@ -181,11 +191,29 @@ export default function RecentOutputs() {
             <EmptyState key="empty" />
           ) : (
             list.map((output, i) => (
-              <OutputCard key={output._id} output={output} index={i} mutate={mutate} />
+              <OutputCard 
+                key={output._id} 
+                output={output} 
+                index={i} 
+                mutate={mutate} 
+                onDeleteClick={handleDeleteClick} 
+              />
             ))
           )}
         </AnimatePresence>
       </div>
+
+      {/* Reusable Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deleteModal.isOpen && (
+          <DeleteConfirmModal 
+            isOpen={deleteModal.isOpen}
+            isDeleting={deleteModal.isDeleting}
+            onClose={() => setDeleteModal({ isOpen: false, id: null, isDeleting: false })}
+            onConfirm={confirmDelete}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }

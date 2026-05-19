@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import DashboardHeader from '@/app/components/dashboard/DashboardHeader'
 import GeneratorForm from '@/app/components/generator/GeneratorForm'
 import OutputPanel from '@/app/components/generator/OutputPanel'
 
@@ -41,13 +42,11 @@ export default function GeneratorPage() {
 
   return (
     <div className="flex flex-col min-h-full">
-      {/* Top Header */}
-      <div className="sticky top-0 z-10 bg-[#09090B] border-b border-[#27272A] px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-[#F4F4F5]">Cold Email Generator</h1>
-          <p className="text-xs text-[#71717A]">AI-powered high-conversion outreach</p>
-        </div>
-      </div>
+      {/* Integrated Dashboard Header for Mobile Menu Support */}
+      <DashboardHeader 
+        title="Cold Email Generator" 
+        subtitle="AI-powered high-conversion outreach" 
+      />
 
       {/* Main Two-Panel Layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
