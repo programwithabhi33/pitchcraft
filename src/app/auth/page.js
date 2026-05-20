@@ -583,24 +583,34 @@ export default function AuthPage() {
       <div className="hidden lg:flex lg:w-[42%] relative overflow-hidden flex-col">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1E1033] via-[#2D1060] to-[#09090B]" />
         <div className="absolute inset-0 mesh-grid opacity-20" />
-        <div className="relative flex flex-col flex-1 p-10 justify-center text-center items-center">
-          <div className="space-y-8 max-w-sm">
-            <h2 className="text-3xl font-extrabold text-[#F4F4F5] leading-snug">
-              Win clients with <span className="gradient-text">AI-written</span>{" "}
-              emails
-            </h2>
-            <ul className="space-y-4 text-left">
-              {benefits.map((b, i) => (
-                <li key={i} className="flex items-center gap-3.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#7C3AED]/20 border border-[#7C3AED]/30 flex items-center justify-center text-[#A78BFA] flex-shrink-0 mt-0.5">
-                    {b.icon}
-                  </div>
-                  <span className="text-sm text-[#D4D4D8] leading-snug">
-                    {b.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
+        <div className="relative flex flex-col flex-1 p-10 justify-center">
+          <Link
+            href="/"
+            className="absolute top-10 left-10 flex items-center gap-2 text-[#A1A1AA] hover:text-[#F4F4F5] transition-colors cursor-pointer"
+          >
+            <ArrowLeft size={16} /> Back to Home
+          </Link>
+          <div className="space-y-8">
+            <div className="relative flex flex-col flex-1 justify-center items-center">
+              <div className="space-y-8 max-w-sm">
+                <h2 className="text-3xl font-extrabold text-[#F4F4F5] leading-snug">
+                  Win clients with{" "}
+                  <span className="gradient-text">AI-written</span> emails
+                </h2>
+                <ul className="space-y-4">
+                  {benefits.map((b, i) => (
+                    <li key={i} className="flex items-center gap-3.5">
+                      <div className="w-7 h-7 rounded-lg bg-[#7C3AED]/20 border border-[#7C3AED]/30 flex items-center justify-center text-[#A78BFA] flex-shrink-0 mt-0.5">
+                        {b.icon}
+                      </div>
+                      <span className="text-sm text-[#D4D4D8] leading-snug">
+                        {b.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -608,7 +618,7 @@ export default function AuthPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12 lg:py-0 relative">
         <Link
           href="/"
-          className="absolute top-10 left-10 flex items-center gap-2 text-[#A1A1AA] hover:text-[#F4F4F5] transition-colors cursor-pointer"
+          className="absolute top-10 left-10 flex items-center gap-2 text-[#A1A1AA] hover:text-[#F4F4F5] transition-colors cursor-pointer lg:hidden"
         >
           <ArrowLeft size={16} /> Back to Home
         </Link>

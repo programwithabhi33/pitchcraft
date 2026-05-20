@@ -1,36 +1,40 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Trash2, Mail, CheckCheck } from 'lucide-react'
-import useSWR from 'swr'
-import DeleteConfirmModal from './DeleteConfirmModal'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Trash2, Mail, CheckCheck } from "lucide-react";
+import useSWR from "swr";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
-const fetcher = (url) => fetch(url).then((res) => res.json())
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const typeConfig = {
   cold_email: {
-    label: 'Cold Email',
+    label: "Cold Email",
     icon: Mail,
-    badgeClass: 'badge-violet',
-    color: '#7C3AED',
+    badgeClass: "badge-violet",
+    color: "#7C3AED",
   },
-}
+};
 
 function OutputCard({ output, index, mutate, onDeleteClick }) {
-  const [copied, setCopied] = useState(false)
-  const config = typeConfig[output.type] || typeConfig.cold_email
-  const Icon = config.icon
+  const [copied, setCopied] = useState(false);
+  const config = typeConfig[output.type] || typeConfig.cold_email;
+  const Icon = config.icon;
 
   const handleCopy = () => {
-    navigator.clipboard?.writeText(output.content)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    navigator.clipboard?.writeText(output.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-  const formattedDate = new Date(output.generatedAt).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric',
-  })
+  const formattedDate = new Date(output.generatedAt).toLocaleDateString(
+    "en-US",
+    {
+      month: "short",
+      day: "numeric",
+    },
+  );
 
   return (
     <motion.div
@@ -50,13 +54,17 @@ function OutputCard({ output, index, mutate, onDeleteClick }) {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-[#F4F4F5] truncate">
-              {output.inputs?.clientName || 'Generated Output'}
+              {output.inputs?.clientName || "Generated Output"}
             </p>
-            <p className="text-xs text-[#52525B] truncate">{output.inputs?.service}</p>
+            <p className="text-xs text-[#52525B] truncate">
+              {output.inputs?.service}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 flex-shrink-0">
-          <span className={`badge ${config.badgeClass} text-[9px]`}>{config.label}</span>
+          <span className={`badge ${config.badgeClass} text-[9px]`}>
+            {config.label}
+          </span>
         </div>
       </div>
 
@@ -66,11 +74,15 @@ function OutputCard({ output, index, mutate, onDeleteClick }) {
 
       <div className="flex items-center justify-between mt-auto pt-1">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-[#52525B] font-medium">{formattedDate}</span>
+          <span className="text-[10px] text-[#52525B] font-medium">
+            {formattedDate}
+          </span>
           {output.tone && (
             <>
               <span className="text-[#27272A]">·</span>
-              <span className="text-[10px] text-[#52525B] font-medium capitalize">{output.tone}</span>
+              <span className="text-[10px] text-[#52525B] font-medium capitalize">
+                {output.tone}
+              </span>
             </>
           )}
         </div>
@@ -81,8 +93,8 @@ function OutputCard({ output, index, mutate, onDeleteClick }) {
             title="Copy content"
             className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
               copied
-                ? 'bg-[#10B981]/20 text-[#10B981]'
-                : 'bg-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#3F3F46]'
+                ? "bg-[#10B981]/20 text-[#10B981]"
+                : "bg-[#27272A] text-[#71717A] hover:text-[#F4F4F5] hover:bg-[#3F3F46]"
             }`}
           >
             {copied ? <CheckCheck size={12} /> : <Copy size={12} />}
@@ -97,7 +109,7 @@ function OutputCard({ output, index, mutate, onDeleteClick }) {
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 function EmptyState() {
@@ -126,48 +138,57 @@ function EmptyState() {
         className="btn-violet text-sm px-6 py-2.5 flex items-center gap-2 cursor-pointer"
       >
         <Mail size={14} />
-        Generate Your First Email
+        <span>Generate Your First Email</span>
       </a>
     </motion.div>
-  )
+  );
 }
 
 export default function RecentOutputs() {
-  const { data: outputs, isLoading, mutate } = useSWR('/api/outputs', fetcher)
-  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, isDeleting: false })
+  const { data: outputs, isLoading, mutate } = useSWR("/api/outputs", fetcher);
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    id: null,
+    isDeleting: false,
+  });
 
   const handleDeleteClick = (id) => {
-    setDeleteModal({ isOpen: true, id, isDeleting: false })
-  }
+    setDeleteModal({ isOpen: true, id, isDeleting: false });
+  };
 
   const confirmDelete = async () => {
-    setDeleteModal(prev => ({ ...prev, isDeleting: true }))
+    setDeleteModal((prev) => ({ ...prev, isDeleting: true }));
     try {
-      const res = await fetch(`/api/outputs/${deleteModal.id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/outputs/${deleteModal.id}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
-        await mutate()
-        setDeleteModal({ isOpen: false, id: null, isDeleting: false })
+        await mutate();
+        setDeleteModal({ isOpen: false, id: null, isDeleting: false });
       } else {
-        alert('Failed to delete email')
-        setDeleteModal(prev => ({ ...prev, isDeleting: false }))
+        alert("Failed to delete email");
+        setDeleteModal((prev) => ({ ...prev, isDeleting: false }));
       }
     } catch (error) {
-      console.error('Delete error:', error)
-      setDeleteModal(prev => ({ ...prev, isDeleting: false }))
+      console.error("Delete error:", error);
+      setDeleteModal((prev) => ({ ...prev, isDeleting: false }));
     }
-  }
+  };
 
   if (isLoading) {
     return (
       <div className="grid sm:grid-cols-2 gap-4 animate-pulse">
-        {[1, 2, 3, 4].map(i => (
-          <div key={i} className="h-32 bg-[#18181B] border border-[#27272A] rounded-2xl" />
+        {[1, 2, 3, 4].map((i) => (
+          <div
+            key={i}
+            className="h-32 bg-[#18181B] border border-[#27272A] rounded-2xl"
+          />
         ))}
       </div>
-    )
+    );
   }
 
-  const list = (outputs || []).slice(0, 4)
+  const list = (outputs || []).slice(0, 4);
 
   return (
     <section className="space-y-4">
@@ -175,7 +196,7 @@ export default function RecentOutputs() {
         <div className="flex items-center gap-2.5">
           <h2 className="text-base font-bold text-[#F4F4F5]">Recent Outputs</h2>
         </div>
-        {(outputs?.length > 0) && (
+        {outputs?.length > 0 && (
           <a
             href="/dashboard/saved"
             className="text-xs text-[#7C3AED] hover:text-[#A78BFA] font-medium transition-colors cursor-pointer"
@@ -186,17 +207,17 @@ export default function RecentOutputs() {
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <AnimatePresence mode='popLayout'>
+        <AnimatePresence mode="popLayout">
           {list.length === 0 ? (
             <EmptyState key="empty" />
           ) : (
             list.map((output, i) => (
-              <OutputCard 
-                key={output._id} 
-                output={output} 
-                index={i} 
-                mutate={mutate} 
-                onDeleteClick={handleDeleteClick} 
+              <OutputCard
+                key={output._id}
+                output={output}
+                index={i}
+                mutate={mutate}
+                onDeleteClick={handleDeleteClick}
               />
             ))
           )}
@@ -206,14 +227,16 @@ export default function RecentOutputs() {
       {/* Reusable Delete Confirmation Modal */}
       <AnimatePresence>
         {deleteModal.isOpen && (
-          <DeleteConfirmModal 
+          <DeleteConfirmModal
             isOpen={deleteModal.isOpen}
             isDeleting={deleteModal.isDeleting}
-            onClose={() => setDeleteModal({ isOpen: false, id: null, isDeleting: false })}
+            onClose={() =>
+              setDeleteModal({ isOpen: false, id: null, isDeleting: false })
+            }
             onConfirm={confirmDelete}
           />
         )}
       </AnimatePresence>
     </section>
-  )
+  );
 }
