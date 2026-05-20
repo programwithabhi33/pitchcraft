@@ -1,5 +1,7 @@
 // Server component — no 'use client' needed
 
+import Link from "next/link";
+
 const footerLinks = {
   Product: [
     { id: "footer-features", label: "Features", href: "/#features" },
@@ -94,13 +96,13 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link.id}>
-                    <a
+                    <Link
                       id={link.id}
                       href={link.href}
                       className="text-[#A1A1AA] hover:text-[#F4F4F5] text-sm transition-colors cursor-pointer"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
