@@ -44,14 +44,14 @@ export default function SavedOutputsPage() {
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
-  
+
   // Modal state
-  const [deleteModal, setDeleteModal] = useState({ 
-    isOpen: false, 
-    id: null, 
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    id: null,
     isDeleting: false,
-    bulk: false 
-  })
+    bulk: false,
+  });
 
   // Derived list
   const list = outputs || [];
@@ -89,28 +89,35 @@ export default function SavedOutputsPage() {
   };
 
   const confirmDelete = async () => {
-    setDeleteModal(prev => ({ ...prev, isDeleting: true }));
+    setDeleteModal((prev) => ({ ...prev, isDeleting: true }));
     try {
       if (deleteModal.bulk) {
         // Bulk delete logic
         await Promise.all(
-            selectedIds.map((id) =>
-              fetch(`/api/outputs/${id}`, { method: "DELETE" }),
-            ),
-          );
-          setSelectedIds([]);
+          selectedIds.map((id) =>
+            fetch(`/api/outputs/${id}`, { method: "DELETE" }),
+          ),
+        );
+        setSelectedIds([]);
       } else {
         // Single delete logic
-        const res = await fetch(`/api/outputs/${deleteModal.id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error('Failed to delete');
+        const res = await fetch(`/api/outputs/${deleteModal.id}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Failed to delete");
       }
-      
+
       await mutate();
-      setDeleteModal({ isOpen: false, id: null, isDeleting: false, bulk: false });
+      setDeleteModal({
+        isOpen: false,
+        id: null,
+        isDeleting: false,
+        bulk: false,
+      });
     } catch (err) {
       console.error("Delete error:", err);
       alert("Failed to delete items");
-      setDeleteModal(prev => ({ ...prev, isDeleting: false }));
+      setDeleteModal((prev) => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -131,64 +138,64 @@ export default function SavedOutputsPage() {
   return (
     <div className="flex flex-col min-h-full">
       {/* Integrated Dashboard Header for Mobile Menu Support */}
-      <DashboardHeader 
-        title="Email Library" 
-        subtitle="Manage and access your previously generated cold emails" 
+      <DashboardHeader
+        title="Email Library"
+        subtitle="Manage and access your previously generated cold emails"
       />
 
       {/* Toolbar - Sticky below the header */}
       <div className="bg-[#09090B] border-b border-[#27272A] px-6 py-6 sticky top-[64px] z-20">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#18181B] p-3 rounded-2xl border border-[#27272A]">
-            <div className="flex w-full sm:w-auto items-center gap-3 flex-1">
-              <div className="relative w-full sm:max-w-xs">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search emails…"
-                  className="w-full bg-[#09090B] border border-[#27272A] rounded-xl pl-9 pr-4 py-2 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] transition-colors"
-                />
-              </div>
-
-              <div className="flex items-center bg-[#09090B] p-1 rounded-xl border border-[#27272A] ml-auto">
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-1.5 rounded-lg transition-colors ${viewMode === "list" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
-                >
-                  <List size={16} />
-                </button>
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-1.5 rounded-lg transition-colors ${viewMode === "grid" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
-                >
-                  <LayoutGrid size={16} />
-                </button>
-              </div>
+          <div className="flex w-full sm:w-auto items-center gap-3 flex-1">
+            <div className="relative w-full sm:max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#52525B]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search emails…"
+                className="w-full bg-[#09090B] border border-[#27272A] rounded-xl pl-9 pr-4 py-2 text-sm text-[#F4F4F5] placeholder-[#52525B] focus:outline-none focus:border-[#7C3AED] transition-colors"
+              />
             </div>
 
-            <AnimatePresence>
-              {selectedIds.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="flex items-center gap-2 w-full sm:w-auto"
-                >
-                  <div className="text-xs font-semibold text-[#A78BFA] px-2 whitespace-nowrap">
-                    {selectedIds.length} selected
-                  </div>
-                  <button
-                    onClick={openBulkDelete}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 transition-colors cursor-pointer"
-                  >
-                    <Trash2 size={14} />
-                    Delete
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="flex items-center bg-[#09090B] p-1 rounded-xl border border-[#27272A] ml-auto">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1.5 rounded-lg transition-colors ${viewMode === "list" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
+              >
+                <List size={16} />
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-1.5 rounded-lg transition-colors ${viewMode === "grid" ? "bg-[#27272A] text-[#F4F4F5] shadow-sm" : "text-[#71717A] hover:text-[#A1A1AA]"} cursor-pointer`}
+              >
+                <LayoutGrid size={16} />
+              </button>
+            </div>
           </div>
+
+          <AnimatePresence>
+            {selectedIds.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="flex items-center gap-2 w-full sm:w-auto"
+              >
+                <div className="text-xs font-semibold text-[#A78BFA] px-2 whitespace-nowrap">
+                  {selectedIds.length} selected
+                </div>
+                <button
+                  onClick={openBulkDelete}
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-[#F43F5E]/10 text-[#F43F5E] hover:bg-[#F43F5E]/20 transition-colors cursor-pointer"
+                >
+                  <Trash2 size={14} />
+                  Delete
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
       {/* ── Main Content Area ── */}
@@ -296,7 +303,7 @@ export default function SavedOutputsPage() {
                                   )}
                                 </td>
                                 <td className="py-4 px-4 whitespace-nowrap text-right">
-                                  <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <div className="flex items-center justify-end gap-1 group-hover:opacity-100 transition-opacity">
                                     <button
                                       onClick={() =>
                                         handleCopy(out._id, out.content)
@@ -382,7 +389,7 @@ export default function SavedOutputsPage() {
                             </span>
 
                             <div
-                              className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="flex items-center gap-1 group-hover:opacity-100 transition-opacity"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -479,15 +486,27 @@ export default function SavedOutputsPage() {
       {/* Confirmation Modal */}
       <AnimatePresence>
         {deleteModal.isOpen && (
-          <DeleteConfirmModal 
+          <DeleteConfirmModal
             isOpen={deleteModal.isOpen}
             isDeleting={deleteModal.isDeleting}
-            onClose={() => setDeleteModal({ isOpen: false, id: null, isDeleting: false, bulk: false })}
+            onClose={() =>
+              setDeleteModal({
+                isOpen: false,
+                id: null,
+                isDeleting: false,
+                bulk: false,
+              })
+            }
             onConfirm={confirmDelete}
-            title={deleteModal.bulk ? `Delete ${selectedIds.length} emails?` : "Delete this email?"}
-            message={deleteModal.bulk 
-              ? "Are you sure you want to remove these items? This action cannot be undone." 
-              : "This email will be permanently removed from your library."
+            title={
+              deleteModal.bulk
+                ? `Delete ${selectedIds.length} emails?`
+                : "Delete this email?"
+            }
+            message={
+              deleteModal.bulk
+                ? "Are you sure you want to remove these items? This action cannot be undone."
+                : "This email will be permanently removed from your library."
             }
           />
         )}
